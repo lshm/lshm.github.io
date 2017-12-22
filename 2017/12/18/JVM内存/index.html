@@ -15,13 +15,13 @@
 
 
 
-<meta name="description" content="内存模型操作系统内存 &amp;gt;a、系统运行的每个进程都是共用内存、cpu缓存、寄存器。如果操作系统物理内存使用达到oomkiller阀值的时候，就会杀掉得分最高 （一般是内存占用高的）的进程。（/var/log/messsage可查看是否存在进程被系统杀掉） &amp;gt;b、cpu之间缓存一致性通过MESI协议     modified（修改）：缓存块已经被修改，必须被写回主存，其他处理器不能再缓存这">
+<meta name="description" content="内存模型操作系统内存">
 <meta name="keywords" content="JVM">
 <meta property="og:type" content="article">
 <meta property="og:title" content="JVM内存">
 <meta property="og:url" content="http://lshm.github.io/2017/12/18/JVM内存/index.html">
 <meta property="og:site_name" content="leo">
-<meta property="og:description" content="内存模型操作系统内存 &amp;gt;a、系统运行的每个进程都是共用内存、cpu缓存、寄存器。如果操作系统物理内存使用达到oomkiller阀值的时候，就会杀掉得分最高 （一般是内存占用高的）的进程。（/var/log/messsage可查看是否存在进程被系统杀掉） &amp;gt;b、cpu之间缓存一致性通过MESI协议     modified（修改）：缓存块已经被修改，必须被写回主存，其他处理器不能再缓存这">
+<meta property="og:description" content="内存模型操作系统内存">
 <meta property="og:image" content="http://lshm.github.io/images/jvm/system_mm.png">
 <meta property="og:image" content="http://lshm.github.io/images/jvm/cpu_cache.png">
 <meta property="og:image" content="http://lshm.github.io/images/jvm/jvm_mm.png">
@@ -35,10 +35,10 @@
 <meta property="og:image" content="http://lshm.github.io/images/jvm/concurrent_preclean.jpg">
 <meta property="og:image" content="http://lshm.github.io/images/jvm/concurent_preclean1.jpg">
 <meta property="og:image" content="http://lshm.github.io/images/jvm/concurent_sweep.jpg">
-<meta property="og:updated_time" content="2017-12-22T12:55:01.454Z">
+<meta property="og:updated_time" content="2017-12-22T13:49:34.748Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="JVM内存">
-<meta name="twitter:description" content="内存模型操作系统内存 &amp;gt;a、系统运行的每个进程都是共用内存、cpu缓存、寄存器。如果操作系统物理内存使用达到oomkiller阀值的时候，就会杀掉得分最高 （一般是内存占用高的）的进程。（/var/log/messsage可查看是否存在进程被系统杀掉） &amp;gt;b、cpu之间缓存一致性通过MESI协议     modified（修改）：缓存块已经被修改，必须被写回主存，其他处理器不能再缓存这">
+<meta name="twitter:description" content="内存模型操作系统内存">
 <meta name="twitter:image" content="http://lshm.github.io/images/jvm/system_mm.png">
 
 <link rel="apple-touch-icon" href= "/apple-touch-icon.png">
@@ -160,13 +160,13 @@
                 <div class="tips-box hide">
                     <div class="tips-arrow"></div>
                     <ul class="tips-inner">
-                        <li>菜单</li>
-                        <li>标签</li>
+                        <li>Menu</li>
+                        <li>Tags</li>
                         
-                        <li>友情链接</li>
+                        <li>Friends</li>
                         
                         
-                        <li>关于我</li>
+                        <li>About Me</li>
                         
                     </ul>
                 </div>
@@ -228,7 +228,7 @@
                 
                 <section class="switch-part switch-part4">
                 
-                    <div id="js-aboutme">专门胡说八道</div>
+                    <div id="js-aboutme">迷途小码农</div>
                 </section>
                 
             </div>
@@ -276,7 +276,7 @@
             </nav>
         </header>                
     </div>
-    <link class="menu-list" tags="标签" friends="友情链接" about="关于我"/>
+    <link class="menu-list" tags="Tags" friends="Friends" about="About Me"/>
 </nav>
       <div class="body-wrap"><article id="post-JVM内存" class="article article-type-post" itemscope itemprop="blogPost">
   
@@ -322,20 +322,20 @@
     <div class="article-entry" itemprop="articleBody">
       
           
-        <h1 id="内存模型"><a href="#内存模型" class="headerlink" title="内存模型"></a><strong>内存模型</strong></h1><h2 id="操作系统内存"><a href="#操作系统内存" class="headerlink" title="操作系统内存"></a>操作系统内存</h2><p><img src="/images/jvm/system_mm.png" alt="系统内存"><br><img src="/images/jvm/cpu_cache.png" alt="cpu缓存"></p>
-<pre><code>&gt;a、系统运行的每个进程都是共用内存、cpu缓存、寄存器。如果操作系统物理内存使用达到oomkiller阀值的时候，就会杀掉得分最高
-（一般是内存占用高的）的进程。（/var/log/messsage可查看是否存在进程被系统杀掉）
-&gt;b、cpu之间缓存一致性通过MESI协议
-    modified（修改）：缓存块已经被修改，必须被写回主存，其他处理器不能再缓存这个块
-    exclusive（互斥）：缓存块还没有被修改，且其他处理器不能装入这个缓存块
-    share（共享）：缓存块未被修改，且其他处理器可以装入这个缓存块
-    invalid（无效）：缓存块中的数据无效
-&gt;c、频繁的线程切换会带来cpu缓存的cache-missing，性能会有所下降。（perf工具跟踪）
-</code></pre><h2 id="JVM内存模型"><a href="#JVM内存模型" class="headerlink" title="JVM内存模型"></a>JVM内存模型</h2><p><img src="/images/jvm/jvm_mm.png" alt="JVM内存"></p>
-<pre><code>&gt;a、线程隔离区包含栈、程序计数器；线程共享包括堆、方法区（java8已经改为Metaspace）
-&gt;b、垃圾回收针对heap以及方法区进行回收
-&gt;c、内存泄漏一般都出现在heap
-</code></pre><h1 id="垃圾回收器算法"><a href="#垃圾回收器算法" class="headerlink" title="垃圾回收器算法"></a>垃圾回收器算法</h1><p>GC的基础算法:标记清理、复制、标记整理。这些算法第一步是标记。<br>标记采用根搜索法，根有这些：<br>1、栈里面的引用<br>2、静态类，常量的引用<br>3、native栈和方法的引用</p>
+        <h1 id="内存模型"><a href="#内存模型" class="headerlink" title="内存模型"></a><strong>内存模型</strong></h1><h2 id="操作系统内存"><a href="#操作系统内存" class="headerlink" title="操作系统内存"></a>操作系统内存</h2><a id="more"></a>
+<p><img src="/images/jvm/system_mm.png" alt="系统内存"><br><img src="/images/jvm/cpu_cache.png" alt="cpu缓存"></p>
+<blockquote>
+<blockquote>
+<p>a、系统运行的每个进程都是共用内存、cpu缓存、寄存器。如果操作系统物理内存使用达到oomkiller阀值的时候，就会杀掉得分最高<br>    （一般是内存占用高的）的进程。（/var/log/messsage可查看是否存在进程被系统杀掉）<br>b、cpu之间缓存一致性通过MESI协议<br>        modified（修改）：缓存块已经被修改，必须被写回主存，其他处理器不能再缓存这个块<br>        exclusive（互斥）：缓存块还没有被修改，且其他处理器不能装入这个缓存块<br>        share（共享）：缓存块未被修改，且其他处理器可以装入这个缓存块<br>        invalid（无效）：缓存块中的数据无效<br>c、频繁的线程切换会带来cpu缓存的cache-missing，性能会有所下降。（perf工具跟踪）</p>
+</blockquote>
+</blockquote>
+<h2 id="JVM内存模型"><a href="#JVM内存模型" class="headerlink" title="JVM内存模型"></a>JVM内存模型</h2><p><img src="/images/jvm/jvm_mm.png" alt="JVM内存"></p>
+<blockquote>
+<blockquote>
+<p>a、线程隔离区包含栈、程序计数器；线程共享包括堆、方法区（java8已经改为Metaspace）<br>b、垃圾回收针对heap以及方法区进行回收<br>c、内存泄漏一般都出现在heap</p>
+</blockquote>
+</blockquote>
+<h1 id="垃圾回收器算法"><a href="#垃圾回收器算法" class="headerlink" title="垃圾回收器算法"></a>垃圾回收器算法</h1><p>GC的基础算法:标记清理、复制、标记整理。这些算法第一步是标记。<br>标记采用根搜索法，根有这些：<br>1、栈里面的引用<br>2、静态类，常量的引用<br>3、native栈和方法的引用</p>
 <h2 id="标记清理"><a href="#标记清理" class="headerlink" title="标记清理"></a>标记清理</h2><p>原理：标记清理分为俩个阶段：标记阶段和清理阶段。标记阶段从根节点找到可达对象，未被标记的对象就是未被引用的垃圾对象。<br>然后在清理阶段，清除未被标记的对象。</p>
 <p>缺点：标记清除算法回收后的控件时不连续的，会产生空间碎片，在对象的堆空间分配过程中，尤其是大对象的分配，不连续内存空间的工作效率要低于连续的空间。</p>
 <p><img src="/images/jvm/gc_marksweep.png" alt="标记清理"></p>
@@ -346,79 +346,57 @@
 <p>缺点：整理比较耗时，需要移动内存</p>
 <p><img src="/images/jvm/gc_markcompact.png" alt="标记整理"></p>
 <h1 id="垃圾回收器"><a href="#垃圾回收器" class="headerlink" title="垃圾回收器"></a>垃圾回收器</h1><p>jvm的heap采用分代回收算法，新生代是复制算法（对象都是朝生夕死，存活的对象少，复制的对象也就比较少），老年代（存活的对象时间长，CMS采用标记清理，其余标记整理）。<br><img src="/images/jvm/jvm_gen.png" alt="heap分代"></p>
-<pre><code>&gt;a、-Xmx5200m              堆最大大小
-    -Xms5200m              堆最小大小
-    -Xmn3600m              堆新生代大小
-    -XX:SurvivorRatio=8 新生代eden与一个survivor的比值
-
-&gt;b、新生代回收：eden区域无法分配新对象，将存活对象复制到其中一个Survivor区，清空eden以及另外一个Survivor。
-如果Survivor(-XX:TargetSurvivorRatio=50默认超过50,占用超过这个值)无法存储下或者达到年龄阀值（每经过一次新生代回收，
-年龄+1，-XX:MaxTenuringThreshold=15调整年龄，-XX:+PrintTenuringDistribution打印年龄）或者对象大小大于阀值
-（ -XX:PretenureSizeThreshold=xxxx），则转移到Tenured区。
-
-&gt;c、老年代回收：老年代占用空间达到一个阀值出发回收（-XX:UseCMSInitiatingOccupancyOnly=false是否根据设置的比例触发，
-默认false；-XX:CMSInitiatingOccupancyFraction=xxxx指定达到多少触发CMS。）
-</code></pre><p><img src="/images/jvm/JVM_algorithm.jpg" alt="七种垃圾回收器，连线表示可以组合"><br>没有任何场景都适用的完美收集器存在，只有结合场景找最合适的收集器。</p>
+<blockquote>
+<blockquote>
+<p>a、-Xmx5200m              堆最大大小<br>        -Xms5200m              堆最小大小<br>        -Xmn3600m              堆新生代大小<br>        -XX:SurvivorRatio=8 新生代eden与一个survivor的比值</p>
+<p>b、新生代回收：eden区域无法分配新对象，将存活对象复制到其中一个Survivor区，清空eden以及另外一个Survivor。<br>    如果Survivor(-XX:TargetSurvivorRatio=50默认超过50,占用超过这个值)无法存储下或者达到年龄阀值（每经过一次新生代回收，<br>    年龄+1，-XX:MaxTenuringThreshold=15调整年龄，-XX:+PrintTenuringDistribution打印年龄）或者对象大小大于阀值<br>    （ -XX:PretenureSizeThreshold=xxxx），则转移到Tenured区。</p>
+<p>c、老年代回收：老年代占用空间达到一个阀值出发回收（-XX:UseCMSInitiatingOccupancyOnly=false是否根据设置的比例触发，<br>    默认false；-XX:CMSInitiatingOccupancyFraction=xxxx指定达到多少触发CMS。）</p>
+</blockquote>
+</blockquote>
+<p><img src="/images/jvm/JVM_algorithm.jpg" alt="七种垃圾回收器，连线表示可以组合"><br>没有任何场景都适用的完美收集器存在，只有结合场景找最合适的收集器。</p>
 <h2 id="垃圾回收器-1"><a href="#垃圾回收器-1" class="headerlink" title="垃圾回收器"></a>垃圾回收器</h2><p>a、Serial 收集器 (新生代)-XX:+UseSerialGC</p>
-<pre><code>&gt;最基本、历史最悠久（JDK1.3.1之前），这是一个单线程的收集器，当该收集器运行时必须暂停其他所有的工作线程，
-直到它收集结束。
-&gt;收集过程：暂停所有线程
-&gt;算法：复制算法
-&gt;优点：简单高效，拥有很高的单线程收集效率
-&gt;应用：Client模式下的默认新生代收集器
-</code></pre><p>b、ParNew 收集器 (新生代)-XX:+UseParNewGC</p>
-<pre><code>&gt;Serial 的多线程版本，使用多线程进行垃圾收集
-&gt;收集过程：暂停用户线程，垃圾回收并行执行
-&gt;算法：复制算法
-&gt;优点：在CPU多的情况下，拥有比Serial更好的效果。单CPU环境下Serial效果更好
-&gt;应用：许多运行在Server模式下的虚拟机中首选的新生代收集器
-</code></pre><p>c、Parallel Scavenge 收集器(新生代)-XX:+UseParallelGC</p>
-<pre><code>&gt;收集过程：暂停用户线程，垃圾回收并行执行
-&gt;算法：复制算法
-&gt;优点：Parallel Scavenge收集器的目标是达到一个可控制的吞吐量
- 吞吐量 = 运行用户代码时间 / (运行用户代码时间 + 垃圾收集时间)
- 控制吞吐量的参数：最大垃圾收集停顿时间 -XX：MaxGCPauseMillis ; 直接设置吞吐量大小：-XX:GCTimeRatio。
- MaxGCPauseMillis 的值为一个大于0的毫秒数， 最大停顿时间的缩短是以牺牲吞吐量和新生代空间来换取的。
- GCTimeRatio 的值为一个大于0且小于100的整数。例如：-XX:GCTimeRatio=9 我们要求应用程序线程在整个执行时间中至少9/10是
- 活动的(因此，GC线程占用其余1/10)
- -XX:+UseAdaptiveSizePolicy:开启GC自适应调节策略，自动设置新生代大小、Eden与Survior区的比例、晋升老年代对象年龄等
-细节参数
-&gt;应用：适合在后台运算而不需要太多交互的任务
-</code></pre><p>d、Serial Old 收集器 (老年代)-XX:+UseSerialGC</p>
-<pre><code>&gt;Serial收集器的老年代版本，也是一个单线程的收集器，使用标记-整理算法
-&gt;收集过程：暂停所有线程
-&gt;算法：标记-整理算法
-&gt;应用：主要意义是Client模式下的收集器，如果在Server模式下还有：a. JDK1.5之前的版本中与Parallel Scavenge搭配使用，
-b. 作为CMS收集器的后背预案在并发收集时使用
-</code></pre><p>e、Parallel Old 收集器 (老年代)-XX:+UseParallelOldGC</p>
-<pre><code>&gt;Parallel Scavenge收集器的老年代版本，使用多线程和“标记-整理”算法。
-&gt;收集过程：多线程
-&gt;算法：标记-整理算法
-&gt;应用：在注重吞吐量及CPU资源敏感的场合，可以优先考虑Parallel Scavenge加Parallel Old收集器
-</code></pre><p>f、CMS 收集器 (老年代)-XX:+UseConcMarkSweepGC</p>
-<pre><code>&gt;以获取最短回收停顿时间为目标，基于“标记-清除”算法
-&gt;收集过程：初始标记--&gt;并发标记--&gt;重新标记--&gt;并发清除
-　　初始标记、重新标记两个步骤仍需要“Stop The World” : 初始标记仅仅只是标记一下GC Roots能直接关联到的对象，
-    速度很快；并发标记就是进行GC Roots Tracing的过程；重新标记是为了修正并发标记期间因用户程序继续运作，
-    而导致标记产生变动的那一部分对象的标记记录。整个过程中耗时最长的是并发标记和并发清除，
-    这两个过程都可以与用户线程一起工作。所以总体上说CMS收集器内存回收过程与用户线程一起并发执行。
-&gt;算法：标记-清除 算法
-&gt;缺点：1，对cpu资源敏感，默认启动的回收线程数是（cpu数量+3）/4，当cpu数较少的时候，
-        会分掉大部分的cpu去执行收集器线程，影响用户，降低吞吐量。
-　　   2，无法处理浮动垃圾，浮动垃圾即在并发清除阶段因为是并发执行，还会产生垃圾，
-        这一部分垃圾即为浮动垃圾，要等下次收集。
-       3,因为使用的是“标记-清除”算法，会产生碎片。
-</code></pre><p>g、G1收集器 (整个Java堆：包括新生代和老年代)-XX:+UseG1GC</p>
-<pre><code>&gt;特点：并行与并发、分代收集、空间整合、可预测的停顿
-&gt;G1将整个java堆（包括新生代和老生代）划分为多个大小固定的独立区域，并跟踪这些区域的垃圾堆积程度，
-在后台维护一个优先列表，每次根据允许的收集时间，优先回收垃圾最多的区域。
-但这样回收有一个问题：对象分配在某个区域中，但并非只被本区域的其他对象引用，而是可以与整个Java堆任意的
-对象发生引用关系。在做可达性分析的时候，如何避免扫描整个堆呢？
-解决：区域之间的对象引用，以及其他收集器中新生代与老年代之间的对象引用，虚拟机都是使用Remembered Set来避免全堆扫描，
-在Remembered Set中记录对象的引用。
-&gt;收集过程：初始标记--&gt;并发标记--&gt;最终标记--&gt;筛选回收。与CMS不同的是，在最终标记阶段，需要停顿线程，但是可并发执行；
-筛选回收阶段，对各个区域的回收价值和成本进行排序，按照用户所期望的回收时间进行垃圾回收，这个阶段也可以并发执行。
-</code></pre><h2 id="垃圾收集器参数总结"><a href="#垃圾收集器参数总结" class="headerlink" title="垃圾收集器参数总结"></a>垃圾收集器参数总结</h2><pre><code>-XX:+option 启用选项
+<blockquote>
+<blockquote>
+<p>最基本、历史最悠久（JDK1.3.1之前），这是一个单线程的收集器，当该收集器运行时必须暂停其他所有的工作线程，<br>    直到它收集结束。<br>收集过程：暂停所有线程<br>算法：复制算法<br>优点：简单高效，拥有很高的单线程收集效率<br>应用：Client模式下的默认新生代收集器</p>
+</blockquote>
+</blockquote>
+<p>b、ParNew 收集器 (新生代)-XX:+UseParNewGC</p>
+<blockquote>
+<blockquote>
+<p>Serial 的多线程版本，使用多线程进行垃圾收集<br>收集过程：暂停用户线程，垃圾回收并行执行<br>算法：复制算法<br>优点：在CPU多的情况下，拥有比Serial更好的效果。单CPU环境下Serial效果更好<br>应用：许多运行在Server模式下的虚拟机中首选的新生代收集器</p>
+</blockquote>
+</blockquote>
+<p>c、Parallel Scavenge 收集器(新生代)-XX:+UseParallelGC</p>
+<blockquote>
+<blockquote>
+<p>收集过程：暂停用户线程，垃圾回收并行执行<br>算法：复制算法<br>优点：Parallel Scavenge收集器的目标是达到一个可控制的吞吐量<br>     吞吐量 = 运行用户代码时间 / (运行用户代码时间 + 垃圾收集时间)<br>     控制吞吐量的参数：最大垃圾收集停顿时间 -XX：MaxGCPauseMillis ; 直接设置吞吐量大小：-XX:GCTimeRatio。<br>     MaxGCPauseMillis 的值为一个大于0的毫秒数， 最大停顿时间的缩短是以牺牲吞吐量和新生代空间来换取的。<br>     GCTimeRatio 的值为一个大于0且小于100的整数。例如：-XX:GCTimeRatio=9 我们要求应用程序线程在整个执行时间中至少9/10是<br>     活动的(因此，GC线程占用其余1/10)<br>     -XX:+UseAdaptiveSizePolicy:开启GC自适应调节策略，自动设置新生代大小、Eden与Survior区的比例、晋升老年代对象年龄等<br>    细节参数<br>应用：适合在后台运算而不需要太多交互的任务</p>
+</blockquote>
+</blockquote>
+<p>d、Serial Old 收集器 (老年代)-XX:+UseSerialGC</p>
+<blockquote>
+<blockquote>
+<p>Serial收集器的老年代版本，也是一个单线程的收集器，使用标记-整理算法<br>收集过程：暂停所有线程<br>算法：标记-整理算法<br>应用：主要意义是Client模式下的收集器，如果在Server模式下还有：a. JDK1.5之前的版本中与Parallel Scavenge搭配使用，<br>    b. 作为CMS收集器的后背预案在并发收集时使用</p>
+</blockquote>
+</blockquote>
+<p>e、Parallel Old 收集器 (老年代)-XX:+UseParallelOldGC</p>
+<blockquote>
+<blockquote>
+<p>Parallel Scavenge收集器的老年代版本，使用多线程和“标记-整理”算法。<br>收集过程：多线程<br>算法：标记-整理算法<br>应用：在注重吞吐量及CPU资源敏感的场合，可以优先考虑Parallel Scavenge加Parallel Old收集器</p>
+</blockquote>
+</blockquote>
+<p>f、CMS 收集器 (老年代)-XX:+UseConcMarkSweepGC</p>
+<blockquote>
+<blockquote>
+<p>以获取最短回收停顿时间为目标，基于“标记-清除”算法<br>收集过程：初始标记–&gt;并发标记–&gt;重新标记–&gt;并发清除<br>    　　初始标记、重新标记两个步骤仍需要“Stop The World” : 初始标记仅仅只是标记一下GC Roots能直接关联到的对象，<br>        速度很快；并发标记就是进行GC Roots Tracing的过程；重新标记是为了修正并发标记期间因用户程序继续运作，<br>        而导致标记产生变动的那一部分对象的标记记录。整个过程中耗时最长的是并发标记和并发清除，<br>        这两个过程都可以与用户线程一起工作。所以总体上说CMS收集器内存回收过程与用户线程一起并发执行。<br>算法：标记-清除 算法<br>缺点：1，对cpu资源敏感，默认启动的回收线程数是（cpu数量+3）/4，当cpu数较少的时候，<br>            会分掉大部分的cpu去执行收集器线程，影响用户，降低吞吐量。<br>    　　   2，无法处理浮动垃圾，浮动垃圾即在并发清除阶段因为是并发执行，还会产生垃圾，<br>            这一部分垃圾即为浮动垃圾，要等下次收集。<br>           3,因为使用的是“标记-清除”算法，会产生碎片。</p>
+</blockquote>
+</blockquote>
+<p>g、G1收集器 (整个Java堆：包括新生代和老年代)-XX:+UseG1GC</p>
+<blockquote>
+<blockquote>
+<p>特点：并行与并发、分代收集、空间整合、可预测的停顿<br>G1将整个java堆（包括新生代和老生代）划分为多个大小固定的独立区域，并跟踪这些区域的垃圾堆积程度，<br>    在后台维护一个优先列表，每次根据允许的收集时间，优先回收垃圾最多的区域。<br>    但这样回收有一个问题：对象分配在某个区域中，但并非只被本区域的其他对象引用，而是可以与整个Java堆任意的<br>    对象发生引用关系。在做可达性分析的时候，如何避免扫描整个堆呢？<br>    解决：区域之间的对象引用，以及其他收集器中新生代与老年代之间的对象引用，虚拟机都是使用Remembered Set来避免全堆扫描，<br>    在Remembered Set中记录对象的引用。<br>收集过程：初始标记–&gt;并发标记–&gt;最终标记–&gt;筛选回收。与CMS不同的是，在最终标记阶段，需要停顿线程，但是可并发执行；<br>    筛选回收阶段，对各个区域的回收价值和成本进行排序，按照用户所期望的回收时间进行垃圾回收，这个阶段也可以并发执行。</p>
+</blockquote>
+</blockquote>
+<h2 id="垃圾收集器参数总结"><a href="#垃圾收集器参数总结" class="headerlink" title="垃圾收集器参数总结"></a>垃圾收集器参数总结</h2><pre><code>-XX:+option 启用选项
 -XX:-option 不启用选项
 -XX:option=number
 -XX:option=string
@@ -521,31 +499,30 @@ b. 作为CMS收集器的后背预案在并发收集时使用
 </tr>
 </tbody>
 </table>
-<h2 id="CMS与FULL-GC关系"><a href="#CMS与FULL-GC关系" class="headerlink" title="CMS与FULL GC关系"></a>CMS与FULL GC关系</h2><pre><code>&gt;1.Full GC == Major GC指的是对老年代/永久代的stop the world的GC
-&gt;2.Full GC的次数 = 老年代GC时 stop the world的次数
-&gt;3.Full GC的时间 = 老年代GC时 stop the world的总时间
-&gt;4.CMS 不等于Full GC，我们可以看到CMS分为多个阶段，只有stop the world的阶段被计算到了Full GC的次数和时间，
-而和业务线程并发的GC的次数和时间则不被认为是Full GC
-&gt;5.Full GC本身不会先进行Minor GC，我们可以配置，让Full GC之前先进行一次Minor GC，
-因为老年代很多对象都会引用到新生代的对象，先进行一次Minor GC可以提高老年代GC的速度。比如老年代使用CMS时，
-设置CMSScavengeBeforeRemark优化，让CMS remark之前先进行一次Minor GC。
-</code></pre><h1 id="垃圾回收日志分析"><a href="#垃圾回收日志分析" class="headerlink" title="垃圾回收日志分析"></a>垃圾回收日志分析</h1><h2 id="jvm日志输出配置"><a href="#jvm日志输出配置" class="headerlink" title="jvm日志输出配置"></a>jvm日志输出配置</h2><pre><code>-XX:+PrintGC 输出GC日志
+<h2 id="CMS与FULL-GC关系"><a href="#CMS与FULL-GC关系" class="headerlink" title="CMS与FULL GC关系"></a>CMS与FULL GC关系</h2><blockquote>
+<blockquote>
+<p>1.Full GC == Major GC指的是对老年代/永久代的stop the world的GC<br>2.Full GC的次数 = 老年代GC时 stop the world的次数<br>3.Full GC的时间 = 老年代GC时 stop the world的总时间<br>4.CMS 不等于Full GC，我们可以看到CMS分为多个阶段，只有stop the world的阶段被计算到了Full GC的次数和时间，<br>而和业务线程并发的GC的次数和时间则不被认为是Full GC<br>5.Full GC本身不会先进行Minor GC，我们可以配置，让Full GC之前先进行一次Minor GC，<br>    因为老年代很多对象都会引用到新生代的对象，先进行一次Minor GC可以提高老年代GC的速度。比如老年代使用CMS时，<br>    设置CMSScavengeBeforeRemark优化，让CMS remark之前先进行一次Minor GC。</p>
+</blockquote>
+</blockquote>
+<h1 id="垃圾回收日志分析"><a href="#垃圾回收日志分析" class="headerlink" title="垃圾回收日志分析"></a>垃圾回收日志分析</h1><h2 id="jvm日志输出配置"><a href="#jvm日志输出配置" class="headerlink" title="jvm日志输出配置"></a>jvm日志输出配置</h2><pre><code>-XX:+PrintGC 输出GC日志
 -XX:+PrintGCDetails 输出GC的详细日志
 -XX:+PrintGCTimeStamps 输出GC的时间戳（以基准时间的形式）
 -XX:+PrintGCDateStamps 输出GC的时间戳（以日期的形式，如 2013-05-04T21:53:59.234+0800）
 -XX:+PrintHeapAtGC 在进行GC的前后打印出堆的信息
 -XX:+PrintTenuringDistribution打印年龄
 -Xloggc:../logs/gc.log 日志文件的输出路径
-</code></pre><h2 id="新生代日志分析"><a href="#新生代日志分析" class="headerlink" title="新生代日志分析"></a>新生代日志分析</h2><pre><code>&gt;2017-11-15T00:45:01.178+0800: 10.562: [GC (Allocation Failure) 
-2017-11-15T00:45:01.178+0800: 10.562: [ParNew: 2266752K-&gt;249396K(2550080K), 0.3442388 secs]
-2266752K-&gt;249396K(4250944K), 0.3444075 secs] [Times: user=0.49 sys=0.07, real=0.34 secs]
-&gt;时间 [GC （gc原因） 时间 [新生代回收算法: 新生代回收前大小-&gt;新生代回收后大小(新生代总大小)，回收执行时间]
-回收前堆大小-&gt;回收后堆大小(堆总大小), 本次gc总时间][Times：用户空间执行时间 系统空间执行时间 实际执行时间]
-</code></pre><p>从一条GC记录中我们可以看到<br>a、Young GC回收了 2266752-249396=2017356K的内存<br>Heap区通过这次回收总共减少了 2266752-249396=2017356K的内存。<br>2017356-2017356=0K说明通过该次Young GC有0K的内存被移动到了Old Gen。<br>b、由于并行执行，0.34(实际时间) 小于 0.49(用户空间执行时间)+0.07(系统空间执行时间)</p>
-<h2 id="CMS日志分析"><a href="#CMS日志分析" class="headerlink" title="CMS日志分析"></a>CMS日志分析</h2><pre><code>&gt;2016-08-23T11:23:07.321-0200: 64.425: [GC (CMS Initial Mark)1[1 CMS-initial-mark: 10812086K(11901376K)] 
-10887844K(12514816K), 0.0001997 secs] [Times: user=0.00 sys=0.00, real=0.00 secs]
-
-2016-08-23T11:23:07.321-0200: 64.425: [CMS-concurrent-mark-start]
+</code></pre><h2 id="新生代日志分析"><a href="#新生代日志分析" class="headerlink" title="新生代日志分析"></a>新生代日志分析</h2><blockquote>
+<blockquote>
+<p>2017-11-15T00:45:01.178+0800: 10.562: [GC (Allocation Failure)<br>    2017-11-15T00:45:01.178+0800: 10.562: [ParNew: 2266752K-&gt;249396K(2550080K), 0.3442388 secs]<br>    2266752K-&gt;249396K(4250944K), 0.3444075 secs] [Times: user=0.49 sys=0.07, real=0.34 secs]<br>时间 [GC （gc原因） 时间 [新生代回收算法: 新生代回收前大小-&gt;新生代回收后大小(新生代总大小)，回收执行时间]<br>    回收前堆大小-&gt;回收后堆大小(堆总大小), 本次gc总时间][Times：用户空间执行时间 系统空间执行时间 实际执行时间]</p>
+</blockquote>
+</blockquote>
+<p>从一条GC记录中我们可以看到<br>a、Young GC回收了 2266752-249396=2017356K的内存<br>Heap区通过这次回收总共减少了 2266752-249396=2017356K的内存。<br>2017356-2017356=0K说明通过该次Young GC有0K的内存被移动到了Old Gen。<br>b、由于并行执行，0.34(实际时间) 小于 0.49(用户空间执行时间)+0.07(系统空间执行时间)</p>
+<h2 id="CMS日志分析"><a href="#CMS日志分析" class="headerlink" title="CMS日志分析"></a>CMS日志分析</h2><blockquote>
+<blockquote>
+<p>2016-08-23T11:23:07.321-0200: 64.425: [GC (CMS Initial Mark)1[1 CMS-initial-mark: 10812086K(11901376K)]<br>    10887844K(12514816K), 0.0001997 secs] [Times: user=0.00 sys=0.00, real=0.00 secs]</p>
+</blockquote>
+</blockquote>
+<pre><code>2016-08-23T11:23:07.321-0200: 64.425: [CMS-concurrent-mark-start]
 2016-08-23T11:23:07.357-0200: 64.460: [: 0.035/0.035 secs] [Times: user=0.07 sys=0.00, real=0.03 secs]
 
 2016-08-23T11:23:07.357-0200: 64.460: [CMS-concurrent-preclean-start]
@@ -578,12 +555,11 @@ b. 作为CMS收集器的后背预案在并发收集时使用
 <p>g、Concurrent Reset<br>这个阶段并发执行，重新设置CMS算法内部的数据结构，准备下一个CMS生命周期的使用。<br>    2016-08-23T11:23:08.485-0200: 65.589: [CMS-concurrent-reset-start]<br>    2016-08-23T11:23:08.497-0200: 65.601: [CMS-concurrent-reset: 0.012/0.012 secs] [Times: user=0.01 sys=0.00, real=0.01 secs]</p>
 <p>CMS-concurrent-reset – 这个阶段重新设置CMS算法内部的数据结构，为下一个收集阶段做准备；<br>0.012/0.012 secs – 展示该阶段持续的时间和时钟时间；<br>[Times: user=0.01 sys=0.00, real=0.01 secs] – 同上</p>
 <h1 id="内存分析实战"><a href="#内存分析实战" class="headerlink" title="内存分析实战"></a>内存分析实战</h1><p>线上出现full gc情况，处理步骤<br>1、保留一台现场，重启其他机器。<br>2、dump 内存</p>
-<pre><code>&gt;jps -l -m查看进程号
-&gt;jmap -dump:live,format=b,file=/tmp/heap.bin 进程号
-</code></pre><p>3、压缩dump文件</p>
-<pre><code>&gt;cd /tmp
-&gt;tar -czf heap.tar.gz heap.bin
-</code></pre><p>4、下载文件<br>5、解压，用mat打开分析 <a href="https://www.eclipse.org/mat/下载，" target="_blank" rel="noopener">https://www.eclipse.org/mat/下载，</a><br>分析博客 <a href="http://blog.csdn.net/aaa2832/article/details/19419679" target="_blank" rel="noopener">http://blog.csdn.net/aaa2832/article/details/19419679</a></p>
+<blockquote>
+<blockquote>
+<p>jps -l -m查看进程号<br>jmap -dump:live,format=b,file=/tmp/heap.bin 进程号<br>3、压缩dump文件<br>cd /tmp<br>tar -czf heap.tar.gz heap.bin<br>4、下载文件<br>5、解压，用mat打开分析 <a href="https://www.eclipse.org/mat/下载，" target="_blank" rel="noopener">https://www.eclipse.org/mat/下载，</a><br>分析博客 <a href="http://blog.csdn.net/aaa2832/article/details/19419679" target="_blank" rel="noopener">http://blog.csdn.net/aaa2832/article/details/19419679</a></p>
+</blockquote>
+</blockquote>
 <p>ListObjects&gt;with incoming references<br> 表示的是 当前查看的对象，被外部应用<br>ListObjects&gt;with outGoing references<br>表示的是 当前对象，引用了外部对象</p>
 
       
@@ -593,17 +569,17 @@ b. 作为CMS收集器的后背预案在并发收集时使用
   
     
     <div class="copyright">
-        <p><span>本文标题:</span><a href="/2017/12/18/JVM内存/">JVM内存</a></p>
-        <p><span>文章作者:</span><a href="/" title="回到主页">leo</a></p>
-        <p><span>发布时间:</span>2017-12-18, 15:15:55</p>
-        <p><span>最后更新:</span>2017-12-22, 20:55:01</p>
+        <p><span>Title:</span><a href="/2017/12/18/JVM内存/">JVM内存</a></p>
+        <p><span>Author:</span><a href="/" title="Back to Homepage">leo</a></p>
+        <p><span>Created:</span>2017-12-18, 15:15:55</p>
+        <p><span>Updated:</span>2017-12-22, 21:49:34</p>
         <p>
-            <span>原始链接:</span><a class="post-url" href="/2017/12/18/JVM内存/" title="JVM内存">http://lshm.github.io/2017/12/18/JVM内存/</a>
-            <span class="copy-path" data-clipboard-text="原文: http://lshm.github.io/2017/12/18/JVM内存/　　作者: leo" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <span>Full URL:</span><a class="post-url" href="/2017/12/18/JVM内存/" title="JVM内存">http://lshm.github.io/2017/12/18/JVM内存/</a>
+            <span class="copy-path" data-clipboard-text="From http://lshm.github.io/2017/12/18/JVM内存/　　By leo" title="Copy Article&#39;s Link &amp; Author"><i class="fa fa-clipboard"></i></span>
             <script> var clipboard = new Clipboard('.copy-path'); </script>
         </p>
         <p>
-            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" title="CC BY-NC-SA 4.0 International" target = "_blank">"署名-非商用-相同方式共享 4.0"</a> 转载请保留原文链接及作者。
+            <span>License:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" title="CC BY-NC-SA 4.0 International" target = "_blank">"CC BY-NC-SA 4.0"</a> Keep Link &amp; Author if Distribute.
         </p>
     </div>
 
@@ -613,7 +589,7 @@ b. 作为CMS收集器的后背预案在并发收集时使用
 </article>
 
     <div id="toc" class="toc-article">
-        <strong class="toc-title">文章目录</strong>
+        <strong class="toc-title">Contents</strong>
         
             <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#内存模型"><span class="toc-number">1.</span> <span class="toc-text"><a href="#&#x5185;&#x5B58;&#x6A21;&#x578B;" class="headerlink" title="&#x5185;&#x5B58;&#x6A21;&#x578B;"></a><strong>&#x5185;&#x5B58;&#x6A21;&#x578B;</strong></span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#操作系统内存"><span class="toc-number">1.1.</span> <span class="toc-text"><a href="#&#x64CD;&#x4F5C;&#x7CFB;&#x7EDF;&#x5185;&#x5B58;" class="headerlink" title="&#x64CD;&#x4F5C;&#x7CFB;&#x7EDF;&#x5185;&#x5B58;"></a>&#x64CD;&#x4F5C;&#x7CFB;&#x7EDF;&#x5185;&#x5B58;</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JVM内存模型"><span class="toc-number">1.2.</span> <span class="toc-text"><a href="#JVM&#x5185;&#x5B58;&#x6A21;&#x578B;" class="headerlink" title="JVM&#x5185;&#x5B58;&#x6A21;&#x578B;"></a>JVM&#x5185;&#x5B58;&#x6A21;&#x578B;</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#垃圾回收器算法"><span class="toc-number">2.</span> <span class="toc-text"><a href="#&#x5783;&#x573E;&#x56DE;&#x6536;&#x5668;&#x7B97;&#x6CD5;" class="headerlink" title="&#x5783;&#x573E;&#x56DE;&#x6536;&#x5668;&#x7B97;&#x6CD5;"></a>&#x5783;&#x573E;&#x56DE;&#x6536;&#x5668;&#x7B97;&#x6CD5;</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#标记清理"><span class="toc-number">2.1.</span> <span class="toc-text"><a href="#&#x6807;&#x8BB0;&#x6E05;&#x7406;" class="headerlink" title="&#x6807;&#x8BB0;&#x6E05;&#x7406;"></a>&#x6807;&#x8BB0;&#x6E05;&#x7406;</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#复制"><span class="toc-number">2.2.</span> <span class="toc-text"><a href="#&#x590D;&#x5236;" class="headerlink" title="&#x590D;&#x5236;"></a>&#x590D;&#x5236;</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#标记整理"><span class="toc-number">2.3.</span> <span class="toc-text"><a href="#&#x6807;&#x8BB0;&#x6574;&#x7406;" class="headerlink" title="&#x6807;&#x8BB0;&#x6574;&#x7406;"></a>&#x6807;&#x8BB0;&#x6574;&#x7406;</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#垃圾回收器"><span class="toc-number">3.</span> <span class="toc-text"><a href="#&#x5783;&#x573E;&#x56DE;&#x6536;&#x5668;" class="headerlink" title="&#x5783;&#x573E;&#x56DE;&#x6536;&#x5668;"></a>&#x5783;&#x573E;&#x56DE;&#x6536;&#x5668;</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#垃圾回收器-1"><span class="toc-number">3.1.</span> <span class="toc-text"><a href="#&#x5783;&#x573E;&#x56DE;&#x6536;&#x5668;-1" class="headerlink" title="&#x5783;&#x573E;&#x56DE;&#x6536;&#x5668;"></a>&#x5783;&#x573E;&#x56DE;&#x6536;&#x5668;</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#垃圾收集器参数总结"><span class="toc-number">3.2.</span> <span class="toc-text"><a href="#&#x5783;&#x573E;&#x6536;&#x96C6;&#x5668;&#x53C2;&#x6570;&#x603B;&#x7ED3;" class="headerlink" title="&#x5783;&#x573E;&#x6536;&#x96C6;&#x5668;&#x53C2;&#x6570;&#x603B;&#x7ED3;"></a>&#x5783;&#x573E;&#x6536;&#x96C6;&#x5668;&#x53C2;&#x6570;&#x603B;&#x7ED3;</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CMS与FULL-GC关系"><span class="toc-number">3.3.</span> <span class="toc-text"><a href="#CMS&#x4E0E;FULL-GC&#x5173;&#x7CFB;" class="headerlink" title="CMS&#x4E0E;FULL GC&#x5173;&#x7CFB;"></a>CMS&#x4E0E;FULL GC&#x5173;&#x7CFB;</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#垃圾回收日志分析"><span class="toc-number">4.</span> <span class="toc-text"><a href="#&#x5783;&#x573E;&#x56DE;&#x6536;&#x65E5;&#x5FD7;&#x5206;&#x6790;" class="headerlink" title="&#x5783;&#x573E;&#x56DE;&#x6536;&#x65E5;&#x5FD7;&#x5206;&#x6790;"></a>&#x5783;&#x573E;&#x56DE;&#x6536;&#x65E5;&#x5FD7;&#x5206;&#x6790;</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#jvm日志输出配置"><span class="toc-number">4.1.</span> <span class="toc-text"><a href="#jvm&#x65E5;&#x5FD7;&#x8F93;&#x51FA;&#x914D;&#x7F6E;" class="headerlink" title="jvm&#x65E5;&#x5FD7;&#x8F93;&#x51FA;&#x914D;&#x7F6E;"></a>jvm&#x65E5;&#x5FD7;&#x8F93;&#x51FA;&#x914D;&#x7F6E;</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#新生代日志分析"><span class="toc-number">4.2.</span> <span class="toc-text"><a href="#&#x65B0;&#x751F;&#x4EE3;&#x65E5;&#x5FD7;&#x5206;&#x6790;" class="headerlink" title="&#x65B0;&#x751F;&#x4EE3;&#x65E5;&#x5FD7;&#x5206;&#x6790;"></a>&#x65B0;&#x751F;&#x4EE3;&#x65E5;&#x5FD7;&#x5206;&#x6790;</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CMS日志分析"><span class="toc-number">4.3.</span> <span class="toc-text"><a href="#CMS&#x65E5;&#x5FD7;&#x5206;&#x6790;" class="headerlink" title="CMS&#x65E5;&#x5FD7;&#x5206;&#x6790;"></a>CMS&#x65E5;&#x5FD7;&#x5206;&#x6790;</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#内存分析实战"><span class="toc-number">5.</span> <span class="toc-text"><a href="#&#x5185;&#x5B58;&#x5206;&#x6790;&#x5B9E;&#x6218;" class="headerlink" title="&#x5185;&#x5B58;&#x5206;&#x6790;&#x5B9E;&#x6218;"></a>&#x5185;&#x5B58;&#x5206;&#x6790;&#x5B9E;&#x6218;</span></a></li></ol>
         
@@ -629,10 +605,10 @@ b. 作为CMS收集器的后背预案在并发收集时使用
         }
     </style>
 
-    <input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
+    <input type="button" id="tocButton" value="Hide"  title="Show or Hide Table of Contents">
 
     <script>
-        yiliaConfig.toc = ["隐藏目录", "显示目录", !!"false"];
+        yiliaConfig.toc = ["Hide", "Show", !!"false"];
     </script>
 
 
@@ -685,13 +661,13 @@ b. 作为CMS收集器的后背预案在并发收集时使用
 
     <div class="scroll" id="post-nav-button">
         
-            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
+            <a href="/" title="Back to Homepage"><i class="fa fa-home"></i></a>
         
 
-        <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
+        <a title="Mini Archives"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
 
         
-            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
+            <a href="/" title="Back to Homepage"><i class="fa fa-home"></i></a>
         
     </div>
 
@@ -712,14 +688,14 @@ b. 作为CMS收集器的后背预案在并发收集时使用
                 2017 leo
             </div>
             <div class="footer-right">
-                <a href="http://hexo.io/" target="_blank" title="快速、简洁且高效的博客框架">Hexo</a>  Theme <a href="https://github.com/MOxFIVE/hexo-theme-yelee" target="_blank" title="简而不减 Hexo 双栏博客主题  v3.5">Yelee</a> by MOxFIVE <i class="fa fa-heart animated infinite pulse"></i>
+                <a href="http://hexo.io/" target="_blank" title="A fast, simple &amp; powerful blog framework">Hexo</a>  Theme <a href="https://github.com/MOxFIVE/hexo-theme-yelee" target="_blank" title="Another simple and elegant theme for Hexo  v3.5">Yelee</a> by MOxFIVE <i class="fa fa-heart animated infinite pulse"></i>
             </div>
         </div>
         
             <div class="visit">
                 
                     <span id="busuanzi_container_site_pv" style='display:none'>
-                        <span id="site-visit" title="本站到访数"><i class="fa fa-user" aria-hidden="true"></i><span id="busuanzi_value_site_uv"></span>
+                        <span id="site-visit" title="Site Visitors"><i class="fa fa-user" aria-hidden="true"></i><span id="busuanzi_value_site_uv"></span>
                         </span>
                     </span>
                 
@@ -728,7 +704,7 @@ b. 作为CMS收集器的后背预案在并发收集时使用
                 
                 
                     <span id="busuanzi_container_page_pv" style='display:none'>
-                        <span id="page-visit"  title="本页阅读量"><i class="fa fa-eye animated infinite pulse" aria-hidden="true"></i><span id="busuanzi_value_page_pv"></span>
+                        <span id="page-visit"  title="Page Hits"><i class="fa fa-eye animated infinite pulse" aria-hidden="true"></i><span id="busuanzi_value_page_pv"></span>
                         </span>
                     </span>
                 
@@ -761,9 +737,9 @@ b. 作为CMS收集器的后背预案在并发收集时使用
 
 
 <div class="scroll" id="scroll">
-    <a href="#" title="返回顶部"><i class="fa fa-arrow-up"></i></a>
-    <a href="#comments" onclick="load$hide();" title="查看评论"><i class="fa fa-comments-o"></i></a>
-    <a href="#footer" title="转到底部"><i class="fa fa-arrow-down"></i></a>
+    <a href="#" title="Back to Top"><i class="fa fa-arrow-up"></i></a>
+    <a href="#comments" onclick="load$hide();" title="Comments"><i class="fa fa-comments-o"></i></a>
+    <a href="#footer" title="Go to Bottom"><i class="fa fa-arrow-down"></i></a>
 </div>
 <script>
     // Open in New Window
