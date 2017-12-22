@@ -288,9 +288,8 @@
     <div class="article-entry" itemprop="articleBody">
       
           
-        <h1 id="内存模型"><a href="#内存模型" class="headerlink" title="内存模型"></a><strong>内存模型</strong></h1><h2 id="操作系统内存"><a href="#操作系统内存" class="headerlink" title="操作系统内存"></a>操作系统内存</h2><pre><code>![系统内存](/images/jvm/system_mm.png)
-![cpu缓存](/images/jvm/cpu_cache.png)
-&gt;a、系统运行的每个进程都是共用内存、cpu缓存、寄存器。如果操作系统物理内存使用达到oomkiller阀值的时候，就会杀掉得分最高
+        <h1 id="内存模型"><a href="#内存模型" class="headerlink" title="内存模型"></a><strong>内存模型</strong></h1><h2 id="操作系统内存"><a href="#操作系统内存" class="headerlink" title="操作系统内存"></a>操作系统内存</h2><p><img src="/images/jvm/system_mm.png" alt="系统内存"><br><img src="/images/jvm/cpu_cache.png" alt="cpu缓存"></p>
+<pre><code>&gt;a、系统运行的每个进程都是共用内存、cpu缓存、寄存器。如果操作系统物理内存使用达到oomkiller阀值的时候，就会杀掉得分最高
 （一般是内存占用高的）的进程。（/var/log/messsage可查看是否存在进程被系统杀掉）
 &gt;b、cpu之间缓存一致性通过MESI协议
     modified（修改）：缓存块已经被修改，必须被写回主存，其他处理器不能再缓存这个块
