@@ -35,7 +35,7 @@
 <meta property="og:image" content="http://lshm.github.io/images/jvm/concurrent_preclean.jpg">
 <meta property="og:image" content="http://lshm.github.io/images/jvm/concurent_preclean1.jpg">
 <meta property="og:image" content="http://lshm.github.io/images/jvm/concurent_sweep.jpg">
-<meta property="og:updated_time" content="2017-12-22T12:20:46.604Z">
+<meta property="og:updated_time" content="2017-12-22T12:55:01.454Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="JVM内存">
 <meta name="twitter:description" content="内存模型操作系统内存 &amp;gt;a、系统运行的每个进程都是共用内存、cpu缓存、寄存器。如果操作系统物理内存使用达到oomkiller阀值的时候，就会杀掉得分最高 （一般是内存占用高的）的进程。（/var/log/messsage可查看是否存在进程被系统杀掉） &amp;gt;b、cpu之间缓存一致性通过MESI协议     modified（修改）：缓存块已经被修改，必须被写回主存，其他处理器不能再缓存这">
@@ -87,12 +87,14 @@
         isCategory: false,
         fancybox_js: "//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.js",
         scrollreveal: "//cdn.bootcss.com/scrollReveal.js/3.1.4/scrollreveal.min.js",
-        search: 
+        search: true
     }
 </script>
 
 
-    <script> yiliaConfig.jquery_ui = [false]; </script>
+    <script>
+        yiliaConfig.jquery_ui = [true, "//cdn.bootcss.com/jqueryui/1.10.4/jquery-ui.min.js", "//cdn.bootcss.com/jqueryui/1.10.4/css/jquery-ui.min.css"];
+    </script>
 
 
 
@@ -119,6 +121,13 @@
 
         
 
+        
+            <form id="search-form">
+            <input type="text" id="local-search-input" name="q" placeholder="search..." class="search form-control" autocomplete="off" autocorrect="off" searchonload="false" />
+            <i class="fa fa-times" onclick="resetSearch()"></i>
+            </form>
+            <div id="local-search-result"></div>
+            <p class='no-result'>No results found <i class='fa fa-spinner fa-pulse'></i></p>
         
 
 
@@ -185,9 +194,7 @@
                             
                                 <a class="fa Email" href="mailto:shengchou@2dfire.com" title="Email"></a>
                             
-                                <a class="fa GitHub" href="#" title="GitHub"></a>
-                            
-                                <a class="fa RSS" href="/atom.xml" title="RSS"></a>
+                                <a class="fa GitHub" href="https://github.com/" title="GitHub"></a>
                             
                         </ul>
                     </nav>
@@ -207,9 +214,11 @@
                     
                       <a class="main-nav-link switch-friends-link" href="https://hexo.io">Hexo</a>
                     
-                      <a class="main-nav-link switch-friends-link" href="https://pages.github.com/">GitHub</a>
+                      <a class="main-nav-link switch-friends-link" href="http://theme-next.iissnan.com/">Next</a>
                     
-                      <a class="main-nav-link switch-friends-link" href="http://moxfive.xyz/">MOxFIVE</a>
+                      <a class="main-nav-link switch-friends-link" href="http://moxfive.coding.me/yelee/">Yelee</a>
+                    
+                      <a class="main-nav-link switch-friends-link" href="http://coolshell.cn/">🐭</a>
                     
                     </div>
                 </section>
@@ -219,7 +228,7 @@
                 
                 <section class="switch-part switch-part4">
                 
-                    <div id="js-aboutme">专注于前端</div>
+                    <div id="js-aboutme">专门胡说八道</div>
                 </section>
                 
             </div>
@@ -261,9 +270,7 @@
                             
                                 <a class="fa Email" target="_blank" href="mailto:shengchou@2dfire.com" title="Email"></a>
                             
-                                <a class="fa GitHub" target="_blank" href="#" title="GitHub"></a>
-                            
-                                <a class="fa RSS" target="_blank" href="/atom.xml" title="RSS"></a>
+                                <a class="fa GitHub" target="_blank" href="https://github.com/" title="GitHub"></a>
                             
                         </ul>
             </nav>
@@ -298,6 +305,10 @@
       
       <div class="article-info article-info-post">
         
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/JAVA/">JAVA</a>
+    </div>
+
 
         
     <div class="article-tag tagcloud">
@@ -324,14 +335,14 @@
 <pre><code>&gt;a、线程隔离区包含栈、程序计数器；线程共享包括堆、方法区（java8已经改为Metaspace）
 &gt;b、垃圾回收针对heap以及方法区进行回收
 &gt;c、内存泄漏一般都出现在heap
-</code></pre><h1 id="垃圾回收器算法"><a href="#垃圾回收器算法" class="headerlink" title="垃圾回收器算法"></a>垃圾回收器算法</h1><h2 id="GC的基础算法"><a href="#GC的基础算法" class="headerlink" title="GC的基础算法"></a>GC的基础算法</h2><p>标记清理、复制、标记整理。这些算法第一步是标记。<br>标记采用根搜索法，根有这些：<br>1、栈里面的引用<br>2、静态类，常量的引用<br>3、native栈和方法的引用</p>
-<h3 id="标记清理"><a href="#标记清理" class="headerlink" title="标记清理"></a>标记清理</h3><p>原理：标记清理分为俩个阶段：标记阶段和清理阶段。标记阶段从根节点找到可达对象，未被标记的对象就是未被引用的垃圾对象。<br>然后在清理阶段，清除未被标记的对象。</p>
+</code></pre><h1 id="垃圾回收器算法"><a href="#垃圾回收器算法" class="headerlink" title="垃圾回收器算法"></a>垃圾回收器算法</h1><p>GC的基础算法:标记清理、复制、标记整理。这些算法第一步是标记。<br>标记采用根搜索法，根有这些：<br>1、栈里面的引用<br>2、静态类，常量的引用<br>3、native栈和方法的引用</p>
+<h2 id="标记清理"><a href="#标记清理" class="headerlink" title="标记清理"></a>标记清理</h2><p>原理：标记清理分为俩个阶段：标记阶段和清理阶段。标记阶段从根节点找到可达对象，未被标记的对象就是未被引用的垃圾对象。<br>然后在清理阶段，清除未被标记的对象。</p>
 <p>缺点：标记清除算法回收后的控件时不连续的，会产生空间碎片，在对象的堆空间分配过程中，尤其是大对象的分配，不连续内存空间的工作效率要低于连续的空间。</p>
 <p><img src="/images/jvm/gc_marksweep.png" alt="标记清理"></p>
-<h3 id="复制"><a href="#复制" class="headerlink" title="复制"></a>复制</h3><p>原理：将内存空间分为两块，每次只使用其中一块，在垃圾回收时，将正在使用的内存中的存活对象复制到未使用的内存块中，之后，清除正在使用的内存中的所有对象，交换两个内存的角色。<br>如果系统中垃圾对象多，需要复制的存活对象数量就会相对较少，因此，复制算法的效率是很高的，而且新的内存空间中可以保证是没有内存碎片的。</p>
+<h2 id="复制"><a href="#复制" class="headerlink" title="复制"></a>复制</h2><p>原理：将内存空间分为两块，每次只使用其中一块，在垃圾回收时，将正在使用的内存中的存活对象复制到未使用的内存块中，之后，清除正在使用的内存中的所有对象，交换两个内存的角色。<br>如果系统中垃圾对象多，需要复制的存活对象数量就会相对较少，因此，复制算法的效率是很高的，而且新的内存空间中可以保证是没有内存碎片的。</p>
 <p>缺点：复制算法的代价是将系统内存折半，一般情况下很难让人接受;对于存活对象较多的情况，效率不能保证</p>
 <p><img src="/images/jvm/gc_copy.png" alt="复制算法"></p>
-<h3 id="标记整理"><a href="#标记整理" class="headerlink" title="标记整理"></a>标记整理</h3><p>原理：当内存中存活对象占比较高时，复制算法的成本很高。标记压缩算法在标记清除算法的基础上做了一些优化，标记压缩算法也是从根节点开始，对所有可达对象做一次标记，<br>但是它并不是简单地清除未标记对象，而是将所有对象压缩到内存的一段，之后清理边界外所有的空间，避免了空间碎片的产生，又不需要浪费一半内存空间。</p>
+<h2 id="标记整理"><a href="#标记整理" class="headerlink" title="标记整理"></a>标记整理</h2><p>原理：当内存中存活对象占比较高时，复制算法的成本很高。标记压缩算法在标记清除算法的基础上做了一些优化，标记压缩算法也是从根节点开始，对所有可达对象做一次标记，<br>但是它并不是简单地清除未标记对象，而是将所有对象压缩到内存的一段，之后清理边界外所有的空间，避免了空间碎片的产生，又不需要浪费一半内存空间。</p>
 <p>缺点：整理比较耗时，需要移动内存</p>
 <p><img src="/images/jvm/gc_markcompact.png" alt="标记整理"></p>
 <h1 id="垃圾回收器"><a href="#垃圾回收器" class="headerlink" title="垃圾回收器"></a>垃圾回收器</h1><p>jvm的heap采用分代回收算法，新生代是复制算法（对象都是朝生夕死，存活的对象少，复制的对象也就比较少），老年代（存活的对象时间长，CMS采用标记清理，其余标记整理）。<br><img src="/images/jvm/jvm_gen.png" alt="heap分代"></p>
@@ -585,7 +596,7 @@ b. 作为CMS收集器的后背预案在并发收集时使用
         <p><span>本文标题:</span><a href="/2017/12/18/JVM内存/">JVM内存</a></p>
         <p><span>文章作者:</span><a href="/" title="回到主页">leo</a></p>
         <p><span>发布时间:</span>2017-12-18, 15:15:55</p>
-        <p><span>最后更新:</span>2017-12-22, 20:20:46</p>
+        <p><span>最后更新:</span>2017-12-22, 20:55:01</p>
         <p>
             <span>原始链接:</span><a class="post-url" href="/2017/12/18/JVM内存/" title="JVM内存">http://lshm.github.io/2017/12/18/JVM内存/</a>
             <span class="copy-path" data-clipboard-text="原文: http://lshm.github.io/2017/12/18/JVM内存/　　作者: leo" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
@@ -604,7 +615,7 @@ b. 作为CMS收集器的后背预案在并发收集时使用
     <div id="toc" class="toc-article">
         <strong class="toc-title">文章目录</strong>
         
-            <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#内存模型"><span class="toc-number">1.</span> <span class="toc-text"><a href="#&#x5185;&#x5B58;&#x6A21;&#x578B;" class="headerlink" title="&#x5185;&#x5B58;&#x6A21;&#x578B;"></a><strong>&#x5185;&#x5B58;&#x6A21;&#x578B;</strong></span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#操作系统内存"><span class="toc-number">1.1.</span> <span class="toc-text"><a href="#&#x64CD;&#x4F5C;&#x7CFB;&#x7EDF;&#x5185;&#x5B58;" class="headerlink" title="&#x64CD;&#x4F5C;&#x7CFB;&#x7EDF;&#x5185;&#x5B58;"></a>&#x64CD;&#x4F5C;&#x7CFB;&#x7EDF;&#x5185;&#x5B58;</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JVM内存模型"><span class="toc-number">1.2.</span> <span class="toc-text"><a href="#JVM&#x5185;&#x5B58;&#x6A21;&#x578B;" class="headerlink" title="JVM&#x5185;&#x5B58;&#x6A21;&#x578B;"></a>JVM&#x5185;&#x5B58;&#x6A21;&#x578B;</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#垃圾回收器算法"><span class="toc-number">2.</span> <span class="toc-text"><a href="#&#x5783;&#x573E;&#x56DE;&#x6536;&#x5668;&#x7B97;&#x6CD5;" class="headerlink" title="&#x5783;&#x573E;&#x56DE;&#x6536;&#x5668;&#x7B97;&#x6CD5;"></a>&#x5783;&#x573E;&#x56DE;&#x6536;&#x5668;&#x7B97;&#x6CD5;</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#GC的基础算法"><span class="toc-number">2.1.</span> <span class="toc-text"><a href="#GC&#x7684;&#x57FA;&#x7840;&#x7B97;&#x6CD5;" class="headerlink" title="GC&#x7684;&#x57FA;&#x7840;&#x7B97;&#x6CD5;"></a>GC&#x7684;&#x57FA;&#x7840;&#x7B97;&#x6CD5;</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#标记清理"><span class="toc-number">2.1.1.</span> <span class="toc-text"><a href="#&#x6807;&#x8BB0;&#x6E05;&#x7406;" class="headerlink" title="&#x6807;&#x8BB0;&#x6E05;&#x7406;"></a>&#x6807;&#x8BB0;&#x6E05;&#x7406;</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#复制"><span class="toc-number">2.1.2.</span> <span class="toc-text"><a href="#&#x590D;&#x5236;" class="headerlink" title="&#x590D;&#x5236;"></a>&#x590D;&#x5236;</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#标记整理"><span class="toc-number">2.1.3.</span> <span class="toc-text"><a href="#&#x6807;&#x8BB0;&#x6574;&#x7406;" class="headerlink" title="&#x6807;&#x8BB0;&#x6574;&#x7406;"></a>&#x6807;&#x8BB0;&#x6574;&#x7406;</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#垃圾回收器"><span class="toc-number">3.</span> <span class="toc-text"><a href="#&#x5783;&#x573E;&#x56DE;&#x6536;&#x5668;" class="headerlink" title="&#x5783;&#x573E;&#x56DE;&#x6536;&#x5668;"></a>&#x5783;&#x573E;&#x56DE;&#x6536;&#x5668;</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#垃圾回收器-1"><span class="toc-number">3.1.</span> <span class="toc-text"><a href="#&#x5783;&#x573E;&#x56DE;&#x6536;&#x5668;-1" class="headerlink" title="&#x5783;&#x573E;&#x56DE;&#x6536;&#x5668;"></a>&#x5783;&#x573E;&#x56DE;&#x6536;&#x5668;</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#垃圾收集器参数总结"><span class="toc-number">3.2.</span> <span class="toc-text"><a href="#&#x5783;&#x573E;&#x6536;&#x96C6;&#x5668;&#x53C2;&#x6570;&#x603B;&#x7ED3;" class="headerlink" title="&#x5783;&#x573E;&#x6536;&#x96C6;&#x5668;&#x53C2;&#x6570;&#x603B;&#x7ED3;"></a>&#x5783;&#x573E;&#x6536;&#x96C6;&#x5668;&#x53C2;&#x6570;&#x603B;&#x7ED3;</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CMS与FULL-GC关系"><span class="toc-number">3.3.</span> <span class="toc-text"><a href="#CMS&#x4E0E;FULL-GC&#x5173;&#x7CFB;" class="headerlink" title="CMS&#x4E0E;FULL GC&#x5173;&#x7CFB;"></a>CMS&#x4E0E;FULL GC&#x5173;&#x7CFB;</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#垃圾回收日志分析"><span class="toc-number">4.</span> <span class="toc-text"><a href="#&#x5783;&#x573E;&#x56DE;&#x6536;&#x65E5;&#x5FD7;&#x5206;&#x6790;" class="headerlink" title="&#x5783;&#x573E;&#x56DE;&#x6536;&#x65E5;&#x5FD7;&#x5206;&#x6790;"></a>&#x5783;&#x573E;&#x56DE;&#x6536;&#x65E5;&#x5FD7;&#x5206;&#x6790;</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#jvm日志输出配置"><span class="toc-number">4.1.</span> <span class="toc-text"><a href="#jvm&#x65E5;&#x5FD7;&#x8F93;&#x51FA;&#x914D;&#x7F6E;" class="headerlink" title="jvm&#x65E5;&#x5FD7;&#x8F93;&#x51FA;&#x914D;&#x7F6E;"></a>jvm&#x65E5;&#x5FD7;&#x8F93;&#x51FA;&#x914D;&#x7F6E;</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#新生代日志分析"><span class="toc-number">4.2.</span> <span class="toc-text"><a href="#&#x65B0;&#x751F;&#x4EE3;&#x65E5;&#x5FD7;&#x5206;&#x6790;" class="headerlink" title="&#x65B0;&#x751F;&#x4EE3;&#x65E5;&#x5FD7;&#x5206;&#x6790;"></a>&#x65B0;&#x751F;&#x4EE3;&#x65E5;&#x5FD7;&#x5206;&#x6790;</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CMS日志分析"><span class="toc-number">4.3.</span> <span class="toc-text"><a href="#CMS&#x65E5;&#x5FD7;&#x5206;&#x6790;" class="headerlink" title="CMS&#x65E5;&#x5FD7;&#x5206;&#x6790;"></a>CMS&#x65E5;&#x5FD7;&#x5206;&#x6790;</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#内存分析实战"><span class="toc-number">5.</span> <span class="toc-text"><a href="#&#x5185;&#x5B58;&#x5206;&#x6790;&#x5B9E;&#x6218;" class="headerlink" title="&#x5185;&#x5B58;&#x5206;&#x6790;&#x5B9E;&#x6218;"></a>&#x5185;&#x5B58;&#x5206;&#x6790;&#x5B9E;&#x6218;</span></a></li></ol>
+            <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#内存模型"><span class="toc-number">1.</span> <span class="toc-text"><a href="#&#x5185;&#x5B58;&#x6A21;&#x578B;" class="headerlink" title="&#x5185;&#x5B58;&#x6A21;&#x578B;"></a><strong>&#x5185;&#x5B58;&#x6A21;&#x578B;</strong></span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#操作系统内存"><span class="toc-number">1.1.</span> <span class="toc-text"><a href="#&#x64CD;&#x4F5C;&#x7CFB;&#x7EDF;&#x5185;&#x5B58;" class="headerlink" title="&#x64CD;&#x4F5C;&#x7CFB;&#x7EDF;&#x5185;&#x5B58;"></a>&#x64CD;&#x4F5C;&#x7CFB;&#x7EDF;&#x5185;&#x5B58;</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JVM内存模型"><span class="toc-number">1.2.</span> <span class="toc-text"><a href="#JVM&#x5185;&#x5B58;&#x6A21;&#x578B;" class="headerlink" title="JVM&#x5185;&#x5B58;&#x6A21;&#x578B;"></a>JVM&#x5185;&#x5B58;&#x6A21;&#x578B;</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#垃圾回收器算法"><span class="toc-number">2.</span> <span class="toc-text"><a href="#&#x5783;&#x573E;&#x56DE;&#x6536;&#x5668;&#x7B97;&#x6CD5;" class="headerlink" title="&#x5783;&#x573E;&#x56DE;&#x6536;&#x5668;&#x7B97;&#x6CD5;"></a>&#x5783;&#x573E;&#x56DE;&#x6536;&#x5668;&#x7B97;&#x6CD5;</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#标记清理"><span class="toc-number">2.1.</span> <span class="toc-text"><a href="#&#x6807;&#x8BB0;&#x6E05;&#x7406;" class="headerlink" title="&#x6807;&#x8BB0;&#x6E05;&#x7406;"></a>&#x6807;&#x8BB0;&#x6E05;&#x7406;</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#复制"><span class="toc-number">2.2.</span> <span class="toc-text"><a href="#&#x590D;&#x5236;" class="headerlink" title="&#x590D;&#x5236;"></a>&#x590D;&#x5236;</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#标记整理"><span class="toc-number">2.3.</span> <span class="toc-text"><a href="#&#x6807;&#x8BB0;&#x6574;&#x7406;" class="headerlink" title="&#x6807;&#x8BB0;&#x6574;&#x7406;"></a>&#x6807;&#x8BB0;&#x6574;&#x7406;</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#垃圾回收器"><span class="toc-number">3.</span> <span class="toc-text"><a href="#&#x5783;&#x573E;&#x56DE;&#x6536;&#x5668;" class="headerlink" title="&#x5783;&#x573E;&#x56DE;&#x6536;&#x5668;"></a>&#x5783;&#x573E;&#x56DE;&#x6536;&#x5668;</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#垃圾回收器-1"><span class="toc-number">3.1.</span> <span class="toc-text"><a href="#&#x5783;&#x573E;&#x56DE;&#x6536;&#x5668;-1" class="headerlink" title="&#x5783;&#x573E;&#x56DE;&#x6536;&#x5668;"></a>&#x5783;&#x573E;&#x56DE;&#x6536;&#x5668;</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#垃圾收集器参数总结"><span class="toc-number">3.2.</span> <span class="toc-text"><a href="#&#x5783;&#x573E;&#x6536;&#x96C6;&#x5668;&#x53C2;&#x6570;&#x603B;&#x7ED3;" class="headerlink" title="&#x5783;&#x573E;&#x6536;&#x96C6;&#x5668;&#x53C2;&#x6570;&#x603B;&#x7ED3;"></a>&#x5783;&#x573E;&#x6536;&#x96C6;&#x5668;&#x53C2;&#x6570;&#x603B;&#x7ED3;</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CMS与FULL-GC关系"><span class="toc-number">3.3.</span> <span class="toc-text"><a href="#CMS&#x4E0E;FULL-GC&#x5173;&#x7CFB;" class="headerlink" title="CMS&#x4E0E;FULL GC&#x5173;&#x7CFB;"></a>CMS&#x4E0E;FULL GC&#x5173;&#x7CFB;</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#垃圾回收日志分析"><span class="toc-number">4.</span> <span class="toc-text"><a href="#&#x5783;&#x573E;&#x56DE;&#x6536;&#x65E5;&#x5FD7;&#x5206;&#x6790;" class="headerlink" title="&#x5783;&#x573E;&#x56DE;&#x6536;&#x65E5;&#x5FD7;&#x5206;&#x6790;"></a>&#x5783;&#x573E;&#x56DE;&#x6536;&#x65E5;&#x5FD7;&#x5206;&#x6790;</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#jvm日志输出配置"><span class="toc-number">4.1.</span> <span class="toc-text"><a href="#jvm&#x65E5;&#x5FD7;&#x8F93;&#x51FA;&#x914D;&#x7F6E;" class="headerlink" title="jvm&#x65E5;&#x5FD7;&#x8F93;&#x51FA;&#x914D;&#x7F6E;"></a>jvm&#x65E5;&#x5FD7;&#x8F93;&#x51FA;&#x914D;&#x7F6E;</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#新生代日志分析"><span class="toc-number">4.2.</span> <span class="toc-text"><a href="#&#x65B0;&#x751F;&#x4EE3;&#x65E5;&#x5FD7;&#x5206;&#x6790;" class="headerlink" title="&#x65B0;&#x751F;&#x4EE3;&#x65E5;&#x5FD7;&#x5206;&#x6790;"></a>&#x65B0;&#x751F;&#x4EE3;&#x65E5;&#x5FD7;&#x5206;&#x6790;</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CMS日志分析"><span class="toc-number">4.3.</span> <span class="toc-text"><a href="#CMS&#x65E5;&#x5FD7;&#x5206;&#x6790;" class="headerlink" title="CMS&#x65E5;&#x5FD7;&#x5206;&#x6790;"></a>CMS&#x65E5;&#x5FD7;&#x5206;&#x6790;</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#内存分析实战"><span class="toc-number">5.</span> <span class="toc-text"><a href="#&#x5185;&#x5B58;&#x5206;&#x6790;&#x5B9E;&#x6218;" class="headerlink" title="&#x5185;&#x5B58;&#x5206;&#x6790;&#x5B9E;&#x6218;"></a>&#x5185;&#x5B58;&#x5206;&#x6790;&#x5B9E;&#x6218;</span></a></li></ol>
         
     </div>
     <style>
@@ -654,6 +665,20 @@ b. 作为CMS收集器的后背预案在并发收集时使用
 
 
     
+        <section class="youyan" id="comments">
+    <script>
+        var loadComment = function(){
+            var d = document, s = d.createElement('script');
+            s.src = 'http://v2.uyan.cc/code/uyan.js?uid=2141007';
+            (d.head || d.body).appendChild(s);
+        }
+    </script>
+    
+    <script> loadComment(); </script>
+
+    <div id="uyan_frame"></div>
+</section>
+    
 
 
 
@@ -684,7 +709,7 @@ b. 作为CMS收集器的后背预案在并发收集时使用
         <div id="footer-info">
             <div class="footer-left">
                 <i class="fa fa-copyright"></i> 
-                2016-2017 leo
+                2017 leo
             </div>
             <div class="footer-right">
                 <a href="http://hexo.io/" target="_blank" title="快速、简洁且高效的博客框架">Hexo</a>  Theme <a href="https://github.com/MOxFIVE/hexo-theme-yelee" target="_blank" title="简而不减 Hexo 双栏博客主题  v3.5">Yelee</a> by MOxFIVE <i class="fa fa-heart animated infinite pulse"></i>
@@ -724,7 +749,7 @@ b. 作为CMS收集器的后背预案在并发收集时使用
                 $("body").css({"background-color": bgColorList[bgColor], "background-size": "cover"});
             }
             else {
-                var backgroundnum = 5;
+                var backgroundnum = 6;
                 var backgroundimg = "url(/background/bg-x.jpg)".replace(/x/gi, Math.ceil(Math.random() * backgroundnum));
                 $("body").css({"background": backgroundimg, "background-attachment": "fixed", "background-size": "cover"});
             }
@@ -743,7 +768,22 @@ b. 作为CMS收集器的后背预案在并发收集时使用
 <script>
     // Open in New Window
     
-        $("a[target=_blank]").removeAttr("target");
+        var oOpenInNew = {
+            
+            
+            
+            
+            
+            
+             archives: ".archive-article-title", 
+             miniArchives: "a.post-list-link", 
+            
+             friends: "#js-friends a", 
+             socail: ".social a" 
+        }
+        for (var x in oOpenInNew) {
+            $(oOpenInNew[x]).attr("target", "_blank");
+        }
     
 </script>
 
