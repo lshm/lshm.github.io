@@ -26,7 +26,7 @@
 <meta property="og:image" content="http://lshm.github.io/images/jvm/concurrent_preclean.jpg">
 <meta property="og:image" content="http://lshm.github.io/images/jvm/concurent_preclean1.jpg">
 <meta property="og:image" content="http://lshm.github.io/images/jvm/concurent_sweep.jpg">
-<meta property="og:updated_time" content="2017-12-22T07:45:27.854Z">
+<meta property="og:updated_time" content="2017-12-22T07:55:11.873Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="JVM内存">
 <meta name="twitter:description" content="一. 内存模型1、操作系统内存 &amp;gt;a、系统运行的每个进程都是共用内存、cpu缓存、寄存器。如果操作系统物理内存使用达到oomkiller阀值的时候，就会杀掉得分最高 （一般是内存占用高的）的进程。（/var/log/messsage可查看是否存在进程被系统杀掉） &amp;gt;b、cpu之间缓存一致性通过MESI协议     modified（修改）：缓存块已经被修改，必须被写回主存，其他处理器不">
@@ -68,7 +68,7 @@
         
           <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
         
-        <a id="nav-search-btn" class="nav-icon" title="Suche"></a>
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
       </nav>
       <div id="search-form-wrap">
         <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://lshm.github.io"></form>
@@ -354,12 +354,13 @@ b. 作为CMS收集器的后背预案在并发收集时使用
 </code></pre><p>3、压缩dump文件</p>
 <pre><code>&gt;cd /tmp
 &gt;tar -czf heap.tar.gz heap.bin
-</code></pre><p>4、下载文件<br>5、解压，用mat打开分析（<a href="https://www.eclipse.org/mat/下载，" target="_blank" rel="noopener">https://www.eclipse.org/mat/下载，</a><br>分析博客<a href="http://blog.csdn.net/aaa2832/article/details/19419679）" target="_blank" rel="noopener">http://blog.csdn.net/aaa2832/article/details/19419679）</a></p>
+</code></pre><p>4、下载文件<br>5、解压，用mat打开分析 <a href="https://www.eclipse.org/mat/下载，" target="_blank" rel="noopener">https://www.eclipse.org/mat/下载，</a><br>分析博客 <a href="http://blog.csdn.net/aaa2832/article/details/19419679" target="_blank" rel="noopener">http://blog.csdn.net/aaa2832/article/details/19419679</a></p>
+<p>ListObjects&gt;with incoming references<br> 表示的是 当前查看的对象，被外部应用<br>ListObjects&gt;with outGoing references<br>表示的是 当前对象，引用了外部对象</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://lshm.github.io/2017/12/18/JVM内存/" data-id="cjbggyzsp00000kiv7by4c0sc" class="article-share-link">Teilen</a>
+      <a data-url="http://lshm.github.io/2017/12/18/JVM内存/" data-id="cjbhmd7x30000ngivo4zo3ujf" class="article-share-link">Share</a>
       
       
     </footer>
@@ -383,7 +384,7 @@ b. 作为CMS收集器的后背预案在并发收集时使用
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Archiv</h3>
+    <h3 class="widget-title">Archives</h3>
     <div class="widget">
       <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a></li></ul>
     </div>
@@ -393,7 +394,7 @@ b. 作为CMS收集器的后背预案在并发收集时使用
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">letzter Beitrag</h3>
+    <h3 class="widget-title">Recent Posts</h3>
     <div class="widget">
       <ul>
         
