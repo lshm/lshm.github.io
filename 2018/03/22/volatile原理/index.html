@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html >
+<head>
+
+    <!--[if lt IE 9]>
+        <style>body {display: none; background: none !important} </style>
+        <meta http-equiv="Refresh" Content="0; url=//outdatedbrowser.com/" />
+    <![endif]-->
+
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="format-detection" content="telephone=no" />
+<meta name="author" content="leo" />
+
+
+
+<meta name="description" content="volatile简介">
+<meta name="keywords" content="jvm">
+<meta property="og:type" content="article">
+<meta property="og:title" content="volatile原理">
+<meta property="og:url" content="http://lshm.github.io/2018/03/22/volatile原理/index.html">
+<meta property="og:site_name" content="leo">
+<meta property="og:description" content="volatile简介">
+<meta property="og:image" content="http://lshm.github.io/images/volatile/jvm_mm.png">
+<meta property="og:updated_time" content="2018-03-30T08:16:36.811Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="volatile原理">
+<meta name="twitter:description" content="volatile简介">
+<meta name="twitter:image" content="http://lshm.github.io/images/volatile/jvm_mm.png">
+
+<link rel="apple-touch-icon" href= "/apple-touch-icon.png">
+
+
+    <link rel="alternate" href="/atom.xml" title="leo" type="application/atom+xml">
+
+
+
+    <link rel="shortcut icon" href="/images/shengchou.jpg">
+
+
+
+    <link href="//cdn.bootcss.com/animate.css/3.5.1/animate.min.css" rel="stylesheet">
+
+
+
+    <link href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.css" rel="stylesheet">
+
+
+
+    <script src="//cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
+    <link href="//cdn.bootcss.com/pace/1.0.2/themes/blue/pace-theme-minimal.css" rel="stylesheet">
+
+
+<link rel="stylesheet" href="/css/style.css">
+
+
+
+<link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+
+
+<title>volatile原理 | leo</title>
+
+<script src="//cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
+<script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+
+<script>
+    var yiliaConfig = {
+        fancybox: true,
+        animate: true,
+        isHome: false,
+        isPost: true,
+        isArchive: false,
+        isTag: false,
+        isCategory: false,
+        fancybox_js: "//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.js",
+        scrollreveal: "//cdn.bootcss.com/scrollReveal.js/3.1.4/scrollreveal.min.js",
+        search: true
+    }
+</script>
+
+
+    <script>
+        yiliaConfig.jquery_ui = [true, "//cdn.bootcss.com/jqueryui/1.10.4/jquery-ui.min.js", "//cdn.bootcss.com/jqueryui/1.10.4/css/jquery-ui.min.css"];
+    </script>
+
+
+
+    <script> yiliaConfig.rootUrl = "\/";</script>
+
+
+
+
+
+
+</head>
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+    <header id="header" class="inner">
+        <a href="/" class="profilepic">
+            <img src="/images/shengchou.jpg" class="animated zoomIn">
+        </a>
+        <hgroup>
+          <h1 class="header-author"><a href="/">leo</a></h1>
+        </hgroup>
+
+        
+
+        
+            <form id="search-form">
+            <input type="text" id="local-search-input" name="q" placeholder="search..." class="search form-control" autocomplete="off" autocorrect="off" searchonload="false" />
+            <i class="fa fa-times" onclick="resetSearch()"></i>
+            </form>
+            <div id="local-search-result"></div>
+            <p class='no-result'>No results found <i class='fa fa-spinner fa-pulse'></i></p>
+        
+
+
+        
+            <div id="switch-btn" class="switch-btn">
+                <div class="icon">
+                    <div class="icon-ctn">
+                        <div class="icon-wrap icon-house" data-idx="0">
+                            <div class="birdhouse"></div>
+                            <div class="birdhouse_holes"></div>
+                        </div>
+                        <div class="icon-wrap icon-ribbon hide" data-idx="1">
+                            <div class="ribbon"></div>
+                        </div>
+                        
+                        <div class="icon-wrap icon-link hide" data-idx="2">
+                            <div class="loopback_l"></div>
+                            <div class="loopback_r"></div>
+                        </div>
+                        
+                        
+                        <div class="icon-wrap icon-me hide" data-idx="3">
+                            <div class="user"></div>
+                            <div class="shoulder"></div>
+                        </div>
+                        
+                    </div>
+                    
+                </div>
+                <div class="tips-box hide">
+                    <div class="tips-arrow"></div>
+                    <ul class="tips-inner">
+                        <li>菜单</li>
+                        <li>标签</li>
+                        
+                        <li>友情链接</li>
+                        
+                        
+                        <li>关于我</li>
+                        
+                    </ul>
+                </div>
+            </div>
+        
+
+        <div id="switch-area" class="switch-area">
+            <div class="switch-wrap">
+                <section class="switch-part switch-part1">
+                    <nav class="header-menu">
+                        <ul>
+                        
+                            <li><a href="/">主页</a></li>
+                        
+                            <li><a href="/archives/">所有文章</a></li>
+                        
+                            <li><a href="/tags/">标签云</a></li>
+                        
+                            <li><a href="/about/">关于我</a></li>
+                        
+                        </ul>
+                    </nav>
+                    <nav class="header-nav">
+                        <ul class="social">
+                            
+                                <a class="fa Email" href="mailto:shengchou@2dfire.com" title="Email"></a>
+                            
+                                <a class="fa GitHub" href="https://github.com/" title="GitHub"></a>
+                            
+                        </ul>
+                    </nav>
+                </section>
+                
+                
+                <section class="switch-part switch-part2">
+                    <div class="widget tagcloud" id="js-tagcloud">
+                        <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSDN博客地址/">CSDN博客地址</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JVM/">JVM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/jvm/">jvm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/spring-boot/">spring-boot</a></li></ul>
+                    </div>
+                </section>
+                
+                
+                
+                <section class="switch-part switch-part3">
+                    <div id="js-friends">
+                    
+                      <a class="main-nav-link switch-friends-link" href="https://hexo.io">Hexo</a>
+                    
+                      <a class="main-nav-link switch-friends-link" href="http://theme-next.iissnan.com/">Next</a>
+                    
+                      <a class="main-nav-link switch-friends-link" href="http://moxfive.coding.me/yelee/">Yelee</a>
+                    
+                      <a class="main-nav-link switch-friends-link" href="http://coolshell.cn/">🐭</a>
+                    
+                    </div>
+                </section>
+                
+
+                
+                
+                <section class="switch-part switch-part4">
+                
+                    <div id="js-aboutme">迷途小码农</div>
+                </section>
+                
+            </div>
+        </div>
+    </header>                
+</div>
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+      <div class="overlay">
+          <div class="slider-trigger"></div>
+          <h1 class="header-author js-mobile-header hide"><a href="/" title="回到主页">leo</a></h1>
+      </div>
+    <div class="intrude-less">
+        <header id="header" class="inner">
+            <a href="/" class="profilepic">
+                <img src="/images/shengchou.jpg" class="animated zoomIn">
+            </a>
+            <hgroup>
+              <h1 class="header-author"><a href="/" title="回到主页">leo</a></h1>
+            </hgroup>
+            
+            <nav class="header-menu">
+                <ul>
+                
+                    <li><a href="/">主页</a></li>
+                
+                    <li><a href="/archives/">所有文章</a></li>
+                
+                    <li><a href="/tags/">标签云</a></li>
+                
+                    <li><a href="/about/">关于我</a></li>
+                
+                <div class="clearfix"></div>
+                </ul>
+            </nav>
+            <nav class="header-nav">
+                        <ul class="social">
+                            
+                                <a class="fa Email" target="_blank" href="mailto:shengchou@2dfire.com" title="Email"></a>
+                            
+                                <a class="fa GitHub" target="_blank" href="https://github.com/" title="GitHub"></a>
+                            
+                        </ul>
+            </nav>
+        </header>                
+    </div>
+    <link class="menu-list" tags="标签" friends="友情链接" about="关于我"/>
+</nav>
+      <div class="body-wrap"><article id="post-volatile原理" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2018/03/22/volatile原理/" class="article-date">
+      <time datetime="2018-03-22T12:08:11.000Z" itemprop="datePublished">2018-03-22</time>
+</a>
+
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      volatile原理
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/JAVA/">JAVA</a>
+    </div>
+
+
+        
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/jvm/">jvm</a></li></ul>
+    </div>
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <h2 id="volatile简介"><a href="#volatile简介" class="headerlink" title="volatile简介"></a>volatile简介</h2><a id="more"></a>
+<blockquote>
+<p>1、volatile是一个修饰类型的关键字，java、c、c++都存在这个关键字。<br>2、Java编程语言允许线程访问共享变量，为了保证变量的准确性和一致性更新，线程需要使用排他锁获得这个变量。Java语言提供了volatile，对于原子操作，Java内存模型保证所有线程看到这个变量的一致性。</p>
+</blockquote>
+<p><img src="/images/volatile/jvm_mm.png" alt="jvm线程内存模型"><br>上图模型中，工作内存其实是cpu缓存等，是个抽象的概念。内存就是机器的内存。<br>volatile关键字做了俩件事：<br>1、保证工作内存的共享变量写会主存。<br>2、使其他工作内存缓存失效（有的cpu采用MESI协议；有的则锁住总线，其他cpu不能从主存读取数据），重新从主存加载。</p>
+<h2 id="volatile使用场景"><a href="#volatile使用场景" class="headerlink" title="volatile使用场景"></a>volatile使用场景</h2><p>1、作为状态标志<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">volatile</span> <span class="keyword">boolean</span> shutdownRequest;</span><br><span class="line"> </span><br><span class="line">...</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">shutdown</span><span class="params">()</span> </span>&#123; shutdownRequest = <span class="keyword">true</span>; &#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123; </span><br><span class="line">    <span class="keyword">while</span> (!shutdownRequest) &#123; </span><br><span class="line">        <span class="comment">// work</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<blockquote>
+<p>很可能会从循环外部调用 shutdown() 方法 —— 即在另一个线程中 —— 因此，需要执行某种同步来确保正确实现 shutdownRequested 变量的可见性。如果其他线程不可见，就可能出现不能及时关闭的问题。</p>
+</blockquote>
+<p>2、一次性安全发布<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">volatile</span> <span class="keyword">boolean</span> init = <span class="keyword">false</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">init</span><span class="params">()</span></span>&#123;</span><br><span class="line">	<span class="keyword">if</span>(init) <span class="keyword">return</span>;</span><br><span class="line">	</span><br><span class="line">	<span class="comment">//do init work</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<blockquote>
+<p>情况跟上面一样，多个线程同时调用init的时候，不用volatile会造成重复初始化。</p>
+</blockquote>
+<p>3、volatile bean模式<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Singleton</span> </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">volatile</span> Singleton singleton;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 构造函数私有，禁止外部实例化</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">Singleton</span><span class="params">()</span> </span>&#123;&#125;;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Singleton <span class="title">getInstance</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (singleton == <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">synchronized</span> (singleton) &#123;</span><br><span class="line">                <span class="keyword">if</span> (singleton == <span class="keyword">null</span>) &#123;</span><br><span class="line">                    singleton = <span class="keyword">new</span> Singleton();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> singleton;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<blockquote>
+<p>由于new Singleton不是原子操作，由多条指令组成。<br>　  （1）分配内存空间。<br>　　（2）初始化对象。<br>　　（3）将内存空间的地址赋值给对应的引用。<br>但是由于操作系统可以对指令进行重排序，所以上面的过程也可能会变成如下过程：<br>　　（1）分配内存空间。<br>　　（2）将内存空间的地址赋值给对应的引用。<br>　　（3）初始化对象</p>
+</blockquote>
+<p>4、开销较低的读写锁策略</p>
+<h2 id="volatile剖析"><a href="#volatile剖析" class="headerlink" title="volatile剖析"></a>volatile剖析</h2><p>1、 内存屏障</p>
+<blockquote>
+<p>Intel硬件提供了一系列的内存屏障，主要有： </p>
+<ol>
+<li>lfence，是一种Load Barrier 读屏障 </li>
+<li>sfence, 是一种Store Barrier 写屏障 </li>
+<li>mfence, 是一种全能型的屏障，具备ifence和sfence的能力 </li>
+<li>Lock前缀，Lock不是一种内存屏障，但是它能完成类似内存屏障的功能。Lock会对CPU总线和高速缓存加锁，可以理解为CPU指令级的一种锁。<br>它后面可以跟ADD, ADC, AND, BTC, BTR, BTS, CMPXCHG, CMPXCH8B, DEC, INC, NEG, NOT, OR, SBB, SUB, XOR, XADD, and XCHG等指令。</li>
+</ol>
+<p>内存屏障的概念很好理解，不同硬件实现内存屏障的方式不同，Java内存模型屏蔽了这种底层硬件平台的差异，由JVM来为不同的平台生成相应的机器码。<br>Java内存屏障主要有Load和Store两类。<br>对Load Barrier来说，在读指令前插入读屏障，可以让高速缓存中的数据失效，重新从主内存加载数据<br>对Store Barrier来说，在写指令之后插入写屏障，能让写入缓存的最新数据写回到主内存</p>
+</blockquote>
+<p>2、java中volatile本质</p>
+<blockquote>
+<p>volatile变量在写操作之后会插入一个store屏障，在读操作之前会插入一个load屏障。<br>当属性声明为volatile的时候，编译成为字节码constantpool中会有volatie的标志，指令为putfield，getfield</p>
+</blockquote>
+<p>解释执行的情况下，会用到c++的关键字volatile关键字修饰：<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line">bytecodeInterpreter.cpp _putfield</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (cache-&gt;is_volatile()) &#123;</span><br><span class="line">	<span class="keyword">if</span> (tos_type == itos) &#123;</span><br><span class="line">	  obj-&gt;release_int_field_put(field_offset, STACK_INT(<span class="number">-1</span>));</span><br><span class="line">	&#125; <span class="keyword">else</span> <span class="keyword">if</span> (tos_type == atos) &#123;</span><br><span class="line">	  VERIFY_OOP(STACK_OBJECT(<span class="number">-1</span>));</span><br><span class="line">	  obj-&gt;release_obj_field_put(field_offset, STACK_OBJECT(<span class="number">-1</span>));</span><br><span class="line">	  OrderAccess::release_store(&amp;BYTE_MAP_BASE[(<span class="keyword">uintptr_t</span>)obj &gt;&gt; CardTableModRefBS::card_shift], <span class="number">0</span>);</span><br><span class="line">	&#125; <span class="keyword">else</span> <span class="keyword">if</span> (tos_type == btos) &#123;</span><br><span class="line">	  obj-&gt;release_byte_field_put(field_offset, STACK_INT(<span class="number">-1</span>));</span><br><span class="line">	&#125; <span class="keyword">else</span> <span class="keyword">if</span> (tos_type == ltos) &#123;</span><br><span class="line">	  obj-&gt;release_long_field_put(field_offset, STACK_LONG(<span class="number">-1</span>));</span><br><span class="line">	&#125; <span class="keyword">else</span> <span class="keyword">if</span> (tos_type == ctos) &#123;</span><br><span class="line">	  obj-&gt;release_char_field_put(field_offset, STACK_INT(<span class="number">-1</span>));</span><br><span class="line">	&#125; <span class="keyword">else</span> <span class="keyword">if</span> (tos_type == stos) &#123;</span><br><span class="line">	  obj-&gt;release_short_field_put(field_offset, STACK_INT(<span class="number">-1</span>));</span><br><span class="line">	&#125; <span class="keyword">else</span> <span class="keyword">if</span> (tos_type == ftos) &#123;</span><br><span class="line">	  obj-&gt;release_float_field_put(field_offset, STACK_FLOAT(<span class="number">-1</span>));</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">	  obj-&gt;release_double_field_put(field_offset, STACK_DOUBLE(<span class="number">-1</span>));</span><br><span class="line">	&#125;</span><br><span class="line">	OrderAccess::storeload();</span><br><span class="line">&#125; </span><br><span class="line"></span><br><span class="line"><span class="keyword">inline</span> jbyte    OrderAccess::load_acquire(<span class="keyword">volatile</span> jbyte*   p) &#123; <span class="keyword">return</span> *p; &#125;</span><br><span class="line"><span class="keyword">inline</span> jshort   OrderAccess::load_acquire(<span class="keyword">volatile</span> jshort*  p) &#123; <span class="keyword">return</span> *p; &#125;</span><br><span class="line"><span class="keyword">inline</span> jint     OrderAccess::load_acquire(<span class="keyword">volatile</span> jint*    p) &#123; <span class="keyword">return</span> *p; &#125;</span><br><span class="line"><span class="keyword">inline</span> jlong    OrderAccess::load_acquire(<span class="keyword">volatile</span> jlong*   p) &#123; <span class="keyword">return</span> Atomic::load(p); &#125;</span><br><span class="line"><span class="keyword">inline</span> jubyte   OrderAccess::load_acquire(<span class="keyword">volatile</span> jubyte*  p) &#123; <span class="keyword">return</span> *p; &#125;</span><br><span class="line"><span class="keyword">inline</span> jushort  OrderAccess::load_acquire(<span class="keyword">volatile</span> jushort* p) &#123; <span class="keyword">return</span> *p; &#125;</span><br><span class="line"><span class="keyword">inline</span> juint    OrderAccess::load_acquire(<span class="keyword">volatile</span> juint*   p) &#123; <span class="keyword">return</span> *p; &#125;</span><br><span class="line"><span class="keyword">inline</span> julong   OrderAccess::load_acquire(<span class="keyword">volatile</span> julong*  p) &#123; <span class="keyword">return</span> Atomic::load((<span class="keyword">volatile</span> jlong*)p); &#125;</span><br><span class="line"><span class="keyword">inline</span> jfloat   OrderAccess::load_acquire(<span class="keyword">volatile</span> jfloat*  p) &#123; <span class="keyword">return</span> *p; &#125;</span><br><span class="line"><span class="keyword">inline</span> jdouble  OrderAccess::load_acquire(<span class="keyword">volatile</span> jdouble* p) &#123; <span class="keyword">return</span> *p; &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">inline</span> <span class="keyword">intptr_t</span> OrderAccess::load_ptr_acquire(<span class="keyword">volatile</span> <span class="keyword">intptr_t</span>*   p) &#123; <span class="keyword">return</span> *p; &#125;</span><br><span class="line"><span class="keyword">inline</span> <span class="keyword">void</span>*    OrderAccess::load_ptr_acquire(<span class="keyword">volatile</span> <span class="keyword">void</span>*       p) &#123; <span class="keyword">return</span> *(<span class="keyword">void</span>* <span class="keyword">volatile</span> *)p; &#125;</span><br><span class="line"><span class="keyword">inline</span> <span class="keyword">void</span>*    OrderAccess::load_ptr_acquire(<span class="keyword">const</span> <span class="keyword">volatile</span> <span class="keyword">void</span>* p) &#123; <span class="keyword">return</span> *(<span class="keyword">void</span>* <span class="keyword">const</span> <span class="keyword">volatile</span> *)p; &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">inline</span> <span class="keyword">void</span>     OrderAccess::release_store(<span class="keyword">volatile</span> jbyte*   p, jbyte   v) &#123; *p = v; &#125;</span><br><span class="line"><span class="keyword">inline</span> <span class="keyword">void</span>     OrderAccess::release_store(<span class="keyword">volatile</span> jshort*  p, jshort  v) &#123; *p = v; &#125;</span><br><span class="line"><span class="keyword">inline</span> <span class="keyword">void</span>     OrderAccess::release_store(<span class="keyword">volatile</span> jint*    p, jint    v) &#123; *p = v; &#125;</span><br><span class="line"><span class="keyword">inline</span> <span class="keyword">void</span>     OrderAccess::release_store(<span class="keyword">volatile</span> jlong*   p, jlong   v) &#123; Atomic::store(v, p); &#125;</span><br><span class="line"><span class="keyword">inline</span> <span class="keyword">void</span>     OrderAccess::release_store(<span class="keyword">volatile</span> jubyte*  p, jubyte  v) &#123; *p = v; &#125;</span><br><span class="line"><span class="keyword">inline</span> <span class="keyword">void</span>     OrderAccess::release_store(<span class="keyword">volatile</span> jushort* p, jushort v) &#123; *p = v; &#125;</span><br><span class="line"><span class="keyword">inline</span> <span class="keyword">void</span>     OrderAccess::release_store(<span class="keyword">volatile</span> juint*   p, juint   v) &#123; *p = v; &#125;</span><br><span class="line"><span class="keyword">inline</span> <span class="keyword">void</span>     OrderAccess::release_store(<span class="keyword">volatile</span> julong*  p, julong  v) &#123; Atomic::store((jlong)v, (<span class="keyword">volatile</span> jlong*)p); &#125;</span><br><span class="line"><span class="keyword">inline</span> <span class="keyword">void</span>     OrderAccess::release_store(<span class="keyword">volatile</span> jfloat*  p, jfloat  v) &#123; *p = v; &#125;</span><br><span class="line"><span class="keyword">inline</span> <span class="keyword">void</span>     OrderAccess::release_store(<span class="keyword">volatile</span> jdouble* p, jdouble v) &#123; *p = v; &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">inline</span> <span class="keyword">void</span>     OrderAccess::release_store_ptr(<span class="keyword">volatile</span> <span class="keyword">intptr_t</span>* p, <span class="keyword">intptr_t</span> v) &#123; *p = v; &#125;</span><br><span class="line"><span class="keyword">inline</span> <span class="keyword">void</span>     OrderAccess::release_store_ptr(<span class="keyword">volatile</span> <span class="keyword">void</span>*     p, <span class="keyword">void</span>*    v) &#123; *(<span class="keyword">void</span>* <span class="keyword">volatile</span> *)p = v; &#125;</span><br></pre></td></tr></table></figure></p>
+<p>jit执行的情况下<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">templateTable_x86_64.cpp putfield_or_static最终调用volatile_barrier</span><br><span class="line"></span><br><span class="line"> volatile_barrier(Assembler::Membar_mask_bits(Assembler::StoreLoad |</span><br><span class="line">                                               Assembler::StoreStore))</span><br><span class="line">											   </span><br><span class="line"></span><br><span class="line">void TemplateTable::volatile_barrier(Assembler::Membar_mask_bits</span><br><span class="line">                                     order_constraint) &#123;</span><br><span class="line">  // Helper function to insert a is-volatile test and memory barrier</span><br><span class="line">  if (os::is_MP()) &#123; // Not needed on single CPU</span><br><span class="line">    __ membar(order_constraint);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;			</span><br><span class="line"></span><br><span class="line">  // Serializes memory and blows flags</span><br><span class="line">  void membar(Membar_mask_bits order_constraint) &#123;</span><br><span class="line">    if (os::is_MP()) &#123;</span><br><span class="line">      // We only have to handle StoreLoad</span><br><span class="line">      if (order_constraint &amp; StoreLoad) &#123;</span><br><span class="line">        // All usable chips support &quot;locked&quot; instructions which suffice</span><br><span class="line">        // as barriers, and are much faster than the alternative of</span><br><span class="line">        // using cpuid instruction. We use here a locked add [esp],0.</span><br><span class="line">        // This is conveniently otherwise a no-op except for blowing</span><br><span class="line">        // flags.</span><br><span class="line">        // Any change to this code may need to revisit other places in</span><br><span class="line">        // the code where this idiom is used, in particular the</span><br><span class="line">        // orderAccess code.</span><br><span class="line">        lock();</span><br><span class="line">        addl(Address(rsp, 0), 0);// Assert the lock# signal here</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure></p>
+
+      
+    </div>
+    
+  </div>
+  
+    
+    <div class="copyright">
+        <p><span>本文标题:</span><a href="/2018/03/22/volatile原理/">volatile原理</a></p>
+        <p><span>文章作者:</span><a href="/" title="回到主页">leo</a></p>
+        <p><span>发布时间:</span>2018-03-22, 20:08:11</p>
+        <p><span>最后更新:</span>2018-03-30, 16:16:36</p>
+        <p>
+            <span>原始链接:</span><a class="post-url" href="/2018/03/22/volatile原理/" title="volatile原理">http://lshm.github.io/2018/03/22/volatile原理/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://lshm.github.io/2018/03/22/volatile原理/　　作者: leo" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <script> var clipboard = new Clipboard('.copy-path'); </script>
+        </p>
+        <p>
+            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" title="CC BY-NC-SA 4.0 International" target = "_blank">"署名-非商用-相同方式共享 4.0"</a> 转载请保留原文链接及作者。
+        </p>
+    </div>
+
+
+
+    <nav id="article-nav">
+        
+        
+            <div id="article-nav-older" class="article-nav-title">
+                <a href="/2018/01/12/csdn博客传送门/">
+                    CSDN传送门
+                </a>
+            </div>
+        
+    </nav>
+
+  
+</article>
+
+    <div id="toc" class="toc-article">
+        <strong class="toc-title">文章目录</strong>
+        
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#volatile简介"><span class="toc-number">1.</span> <span class="toc-text"><a href="#volatile&#x7B80;&#x4ECB;" class="headerlink" title="volatile&#x7B80;&#x4ECB;"></a>volatile&#x7B80;&#x4ECB;</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#volatile使用场景"><span class="toc-number">2.</span> <span class="toc-text"><a href="#volatile&#x4F7F;&#x7528;&#x573A;&#x666F;" class="headerlink" title="volatile&#x4F7F;&#x7528;&#x573A;&#x666F;"></a>volatile&#x4F7F;&#x7528;&#x573A;&#x666F;</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#volatile剖析"><span class="toc-number">3.</span> <span class="toc-text"><a href="#volatile&#x5256;&#x6790;" class="headerlink" title="volatile&#x5256;&#x6790;"></a>volatile&#x5256;&#x6790;</span></a></li></ol>
+        
+    </div>
+    <style>
+        .left-col .switch-btn,
+        .left-col .switch-area {
+            display: none;
+        }
+        .toc-level-3 i,
+        .toc-level-3 ol {
+            display: none !important;
+        }
+    </style>
+
+    <input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
+
+    <script>
+        yiliaConfig.toc = ["隐藏目录", "显示目录", !!"false"];
+    </script>
+
+
+
+    
+<div class="share">
+    
+        <div class="bdsharebuttonbox">
+            <a href="#" class="fa fa-twitter bds_twi" data-cmd="twi" title="分享到推特"></a>
+            <a href="#" class="fa fa-weibo bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+            <a href="#" class="fa fa-qq bds_sqq" data-cmd="sqq" title="分享给 QQ 好友"></a>
+            <a href="#" class="fa fa-files-o bds_copy" data-cmd="copy" title="复制网址"></a>
+            <a href="#" class="fa fa fa-envelope-o bds_mail" data-cmd="mail" title="通过邮件分享"></a>
+            <a href="#" class="fa fa-weixin bds_weixin" data-cmd="weixin" title="生成文章二维码"></a>
+            <a href="#" class="fa fa-share-alt bds_more" data-cmd="more"></i></a>
+        </div>
+        <script>
+            window._bd_share_config={
+                "common":{"bdSnsKey":{},"bdText":"volatile原理　| leo　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+        </script>
+    
+
+    
+</div>
+
+
+
+
+
+
+
+    
+        <section class="youyan" id="comments">
+    <script>
+        var loadComment = function(){
+            var d = document, s = d.createElement('script');
+            s.src = 'http://v2.uyan.cc/code/uyan.js?uid=2141007';
+            (d.head || d.body).appendChild(s);
+        }
+    </script>
+    
+    <script> loadComment(); </script>
+
+    <div id="uyan_frame"></div>
+</section>
+    
+
+
+
+
+    <div class="scroll" id="post-nav-button">
+        
+            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
+        
+
+        <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
+
+        
+            <a href="/2018/01/12/csdn博客传送门/" title="下一篇: CSDN传送门">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        
+    </div>
+
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2018/03/22/volatile原理/">volatile原理</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/12/csdn博客传送门/">CSDN传送门</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/11/spring-boot日志问题/">spring-boot日志问题</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/18/JVM内存/">JVM内存</a></li></ul>
+
+
+
+
+    <script>
+        
+    </script>
+</div>
+      <footer id="footer">
+    <div class="outer">
+        <div id="footer-info">
+            <div class="footer-left">
+                <i class="fa fa-copyright"></i> 
+                2017-2018 leo
+            </div>
+            <div class="footer-right">
+                <a href="http://hexo.io/" target="_blank" title="快速、简洁且高效的博客框架">Hexo</a>  Theme <a href="https://github.com/MOxFIVE/hexo-theme-yelee" target="_blank" title="简而不减 Hexo 双栏博客主题  v3.5">Yelee</a> by MOxFIVE <i class="fa fa-heart animated infinite pulse"></i>
+            </div>
+        </div>
+        
+            <div class="visit">
+                
+                    <span id="busuanzi_container_site_pv" style='display:none'>
+                        <span id="site-visit" title="本站到访数"><i class="fa fa-user" aria-hidden="true"></i><span id="busuanzi_value_site_uv"></span>
+                        </span>
+                    </span>
+                
+                
+                    <span>| </span>
+                
+                
+                    <span id="busuanzi_container_page_pv" style='display:none'>
+                        <span id="page-visit"  title="本页阅读量"><i class="fa fa-eye animated infinite pulse" aria-hidden="true"></i><span id="busuanzi_value_page_pv"></span>
+                        </span>
+                    </span>
+                
+            </div>
+        
+    </div>
+</footer>
+    </div>
+    
+<script data-main="/js/main.js" src="//cdn.bootcss.com/require.js/2.2.0/require.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            var iPad = window.navigator.userAgent.indexOf('iPad');
+            if (iPad > -1 || $(".left-col").css("display") === "none") {
+                var bgColorList = ["#9db3f4", "#414141", "#e5a859", "#f5dfc6", "#c084a0", "#847e72", "#cd8390", "#996731"];
+                var bgColor = Math.ceil(Math.random() * (bgColorList.length - 1));
+                $("body").css({"background-color": bgColorList[bgColor], "background-size": "cover"});
+            }
+            else {
+                var backgroundnum = 6;
+                var backgroundimg = "url(/background/bg-x.jpg)".replace(/x/gi, Math.ceil(Math.random() * backgroundnum));
+                $("body").css({"background": backgroundimg, "background-attachment": "fixed", "background-size": "cover"});
+            }
+        })
+    </script>
+
+
+
+
+
+<div class="scroll" id="scroll">
+    <a href="#" title="返回顶部"><i class="fa fa-arrow-up"></i></a>
+    <a href="#comments" onclick="load$hide();" title="查看评论"><i class="fa fa-comments-o"></i></a>
+    <a href="#footer" title="转到底部"><i class="fa fa-arrow-down"></i></a>
+</div>
+<script>
+    // Open in New Window
+    
+        var oOpenInNew = {
+            
+            
+            
+            
+            
+            
+             archives: ".archive-article-title", 
+             miniArchives: "a.post-list-link", 
+            
+             friends: "#js-friends a", 
+             socail: ".social a" 
+        }
+        for (var x in oOpenInNew) {
+            $(oOpenInNew[x]).attr("target", "_blank");
+        }
+    
+</script>
+
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+  </div>
+</body>
+</html>
