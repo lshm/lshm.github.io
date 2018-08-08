@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html >
+<head>
+
+    <!--[if lt IE 9]>
+        <style>body {display: none; background: none !important} </style>
+        <meta http-equiv="Refresh" Content="0; url=//outdatedbrowser.com/" />
+    <![endif]-->
+
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="format-detection" content="telephone=no" />
+<meta name="author" content="leo" />
+
+
+
+<meta name="description" content="jvm crash定义">
+<meta name="keywords" content="jvm">
+<meta property="og:type" content="article">
+<meta property="og:title" content="jvm crash现场保护小技巧">
+<meta property="og:url" content="http://lshm.github.io/2018/08/08/jvm_crash现场保护小技巧/index.html">
+<meta property="og:site_name" content="leo">
+<meta property="og:description" content="jvm crash定义">
+<meta property="og:updated_time" content="2018-08-08T13:01:18.120Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="jvm crash现场保护小技巧">
+<meta name="twitter:description" content="jvm crash定义">
+
+<link rel="apple-touch-icon" href= "/apple-touch-icon.png">
+
+
+    <link rel="alternate" href="/atom.xml" title="leo" type="application/atom+xml">
+
+
+
+    <link rel="shortcut icon" href="/images/shengchou.jpg">
+
+
+
+    <link href="//cdn.bootcss.com/animate.css/3.5.1/animate.min.css" rel="stylesheet">
+
+
+
+    <link href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.css" rel="stylesheet">
+
+
+
+    <script src="//cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
+    <link href="//cdn.bootcss.com/pace/1.0.2/themes/blue/pace-theme-minimal.css" rel="stylesheet">
+
+
+<link rel="stylesheet" href="/css/style.css">
+
+
+
+<link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+
+
+<title>jvm crash现场保护小技巧 | leo</title>
+
+<script src="//cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
+<script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+
+<script>
+    var yiliaConfig = {
+        fancybox: true,
+        animate: true,
+        isHome: false,
+        isPost: true,
+        isArchive: false,
+        isTag: false,
+        isCategory: false,
+        fancybox_js: "//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.js",
+        scrollreveal: "//cdn.bootcss.com/scrollReveal.js/3.1.4/scrollreveal.min.js",
+        search: true
+    }
+</script>
+
+
+    <script>
+        yiliaConfig.jquery_ui = [true, "//cdn.bootcss.com/jqueryui/1.10.4/jquery-ui.min.js", "//cdn.bootcss.com/jqueryui/1.10.4/css/jquery-ui.min.css"];
+    </script>
+
+
+
+    <script> yiliaConfig.rootUrl = "\/";</script>
+
+
+
+
+
+
+</head>
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+    <header id="header" class="inner">
+        <a href="/" class="profilepic">
+            <img src="/images/shengchou.jpg" class="animated zoomIn">
+        </a>
+        <hgroup>
+          <h1 class="header-author"><a href="/">leo</a></h1>
+        </hgroup>
+
+        
+
+        
+            <form id="search-form">
+            <input type="text" id="local-search-input" name="q" placeholder="search..." class="search form-control" autocomplete="off" autocorrect="off" searchonload="false" />
+            <i class="fa fa-times" onclick="resetSearch()"></i>
+            </form>
+            <div id="local-search-result"></div>
+            <p class='no-result'>No results found <i class='fa fa-spinner fa-pulse'></i></p>
+        
+
+
+        
+            <div id="switch-btn" class="switch-btn">
+                <div class="icon">
+                    <div class="icon-ctn">
+                        <div class="icon-wrap icon-house" data-idx="0">
+                            <div class="birdhouse"></div>
+                            <div class="birdhouse_holes"></div>
+                        </div>
+                        <div class="icon-wrap icon-ribbon hide" data-idx="1">
+                            <div class="ribbon"></div>
+                        </div>
+                        
+                        <div class="icon-wrap icon-link hide" data-idx="2">
+                            <div class="loopback_l"></div>
+                            <div class="loopback_r"></div>
+                        </div>
+                        
+                        
+                        <div class="icon-wrap icon-me hide" data-idx="3">
+                            <div class="user"></div>
+                            <div class="shoulder"></div>
+                        </div>
+                        
+                    </div>
+                    
+                </div>
+                <div class="tips-box hide">
+                    <div class="tips-arrow"></div>
+                    <ul class="tips-inner">
+                        <li>Menu</li>
+                        <li>Tags</li>
+                        
+                        <li>Friends</li>
+                        
+                        
+                        <li>About Me</li>
+                        
+                    </ul>
+                </div>
+            </div>
+        
+
+        <div id="switch-area" class="switch-area">
+            <div class="switch-wrap">
+                <section class="switch-part switch-part1">
+                    <nav class="header-menu">
+                        <ul>
+                        
+                            <li><a href="/">主页</a></li>
+                        
+                            <li><a href="/archives/">所有文章</a></li>
+                        
+                            <li><a href="/tags/">标签云</a></li>
+                        
+                            <li><a href="/about/">关于我</a></li>
+                        
+                        </ul>
+                    </nav>
+                    <nav class="header-nav">
+                        <ul class="social">
+                            
+                                <a class="fa Email" href="mailto:shengchou@2dfire.com" title="Email"></a>
+                            
+                                <a class="fa GitHub" href="https://github.com/" title="GitHub"></a>
+                            
+                        </ul>
+                    </nav>
+                </section>
+                
+                
+                <section class="switch-part switch-part2">
+                    <div class="widget tagcloud" id="js-tagcloud">
+                        <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSDN博客地址/">CSDN博客地址</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JVM/">JVM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/jvm/">jvm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/spring-boot/">spring-boot</a></li></ul>
+                    </div>
+                </section>
+                
+                
+                
+                <section class="switch-part switch-part3">
+                    <div id="js-friends">
+                    
+                      <a class="main-nav-link switch-friends-link" href="https://hexo.io">Hexo</a>
+                    
+                      <a class="main-nav-link switch-friends-link" href="http://theme-next.iissnan.com/">Next</a>
+                    
+                      <a class="main-nav-link switch-friends-link" href="http://moxfive.coding.me/yelee/">Yelee</a>
+                    
+                      <a class="main-nav-link switch-friends-link" href="http://coolshell.cn/">🐭</a>
+                    
+                    </div>
+                </section>
+                
+
+                
+                
+                <section class="switch-part switch-part4">
+                
+                    <div id="js-aboutme">迷途小码农</div>
+                </section>
+                
+            </div>
+        </div>
+    </header>                
+</div>
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+      <div class="overlay">
+          <div class="slider-trigger"></div>
+          <h1 class="header-author js-mobile-header hide"><a href="/" title="回到主页">leo</a></h1>
+      </div>
+    <div class="intrude-less">
+        <header id="header" class="inner">
+            <a href="/" class="profilepic">
+                <img src="/images/shengchou.jpg" class="animated zoomIn">
+            </a>
+            <hgroup>
+              <h1 class="header-author"><a href="/" title="回到主页">leo</a></h1>
+            </hgroup>
+            
+            <nav class="header-menu">
+                <ul>
+                
+                    <li><a href="/">主页</a></li>
+                
+                    <li><a href="/archives/">所有文章</a></li>
+                
+                    <li><a href="/tags/">标签云</a></li>
+                
+                    <li><a href="/about/">关于我</a></li>
+                
+                <div class="clearfix"></div>
+                </ul>
+            </nav>
+            <nav class="header-nav">
+                        <ul class="social">
+                            
+                                <a class="fa Email" target="_blank" href="mailto:shengchou@2dfire.com" title="Email"></a>
+                            
+                                <a class="fa GitHub" target="_blank" href="https://github.com/" title="GitHub"></a>
+                            
+                        </ul>
+            </nav>
+        </header>                
+    </div>
+    <link class="menu-list" tags="Tags" friends="Friends" about="About Me"/>
+</nav>
+      <div class="body-wrap"><article id="post-jvm_crash现场保护小技巧" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2018/08/08/jvm_crash现场保护小技巧/" class="article-date">
+      <time datetime="2018-08-08T11:00:00.000Z" itemprop="datePublished">2018-08-08</time>
+</a>
+
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      jvm crash现场保护小技巧
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/JAVA/">JAVA</a>
+    </div>
+
+
+        
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/jvm/">jvm</a></li></ul>
+    </div>
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <h2 id="jvm-crash定义"><a href="#jvm-crash定义" class="headerlink" title="jvm crash定义"></a>jvm crash定义</h2><a id="more"></a>
+<ul>
+<li>java进程意外消失</li>
+<li>通常伴随着<ul>
+<li>crash log：hs_err_pid<pid>.log</pid></li>
+<li>core dump: core.<pid></pid></li>
+<li>系统日志: 主要是/var/log/messages 里的异常信息</li>
+</ul>
+</li>
+</ul>
+<h2 id="现场保护"><a href="#现场保护" class="headerlink" title="现场保护"></a>现场保护</h2><p>1、JVM检测到Crash的时候执行外部命令</p>
+<ul>
+<li>使用-XX:OnError=’…’</li>
+<li>例如：%p表示jvm进程<br>  -XX:OnError=’pstack %p &gt; ~/pstack%p.log’<br>  -XX:OnError=”pmap %p”                // show memory map<br>  -XX:OnError=”gcore %p; dbx - %p”     // dump core and launch debugger<br>  -XX:OnError=”cat hs_err_pid%p.log | mail my_email@sun.com”<br>  -XX:OnError=”kill -9 %p”             // ?#!@#</li>
+<li>原理<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br></pre></td><td class="code"><pre><span class="line">  os::signal(SIGSEGV, CAST_FROM_FN_PTR(<span class="keyword">void</span> *, crash_handler));</span><br><span class="line">  os::signal(SIGBUS, CAST_FROM_FN_PTR(<span class="keyword">void</span> *, crash_handler));</span><br><span class="line">  </span><br><span class="line">  <span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">crash_handler</span><span class="params">(<span class="keyword">int</span> sig, <span class="keyword">siginfo_t</span>* info, <span class="keyword">void</span>* ucVoid)</span> </span>&#123;</span><br><span class="line">  <span class="comment">// unmask current signal</span></span><br><span class="line">  <span class="keyword">sigset_t</span> newset;</span><br><span class="line">  sigemptyset(&amp;newset);</span><br><span class="line">  sigaddset(&amp;newset, sig);</span><br><span class="line">  sigprocmask(SIG_UNBLOCK, &amp;newset, <span class="literal">NULL</span>);</span><br><span class="line"></span><br><span class="line">  <span class="function">VMError <span class="title">err</span><span class="params">(<span class="literal">NULL</span>, sig, <span class="literal">NULL</span>, info, ucVoid)</span></span>;</span><br><span class="line">  err.report_and_die();</span><br><span class="line"> &#125;</span><br><span class="line"> </span><br><span class="line"> <span class="comment">//错误信息</span></span><br><span class="line"> <span class="keyword">void</span> VMError::report_and_die() &#123;</span><br><span class="line">	<span class="comment">//省略。。。</span></span><br><span class="line">	<span class="keyword">static</span> <span class="keyword">bool</span> skip_OnError = <span class="literal">false</span>;</span><br><span class="line">  <span class="keyword">if</span> (!skip_OnError &amp;&amp; OnError &amp;&amp; OnError[<span class="number">0</span>]) &#123;</span><br><span class="line">    skip_OnError = <span class="literal">true</span>;</span><br><span class="line"></span><br><span class="line">    out.print_raw_cr(<span class="string">"#"</span>);</span><br><span class="line">    out.print_raw   (<span class="string">"# -XX:OnError=\""</span>);</span><br><span class="line">    out.print_raw   (OnError);</span><br><span class="line">    out.print_raw_cr(<span class="string">"\""</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">char</span>* cmd;</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">char</span>* ptr = OnError;</span><br><span class="line">    <span class="keyword">while</span> ((cmd = next_OnError_command(buffer, <span class="keyword">sizeof</span>(buffer), &amp;ptr)) != <span class="literal">NULL</span>)&#123;</span><br><span class="line">      out.print_raw   (<span class="string">"#   Executing "</span>);</span><br><span class="line">		<span class="meta">#<span class="meta-keyword">if</span> defined(LINUX) || defined(_ALLBSD_SOURCE)</span></span><br><span class="line">      out.print_raw   (<span class="string">"/bin/sh -c "</span>);</span><br><span class="line">		<span class="meta">#<span class="meta-keyword">elif</span> defined(SOLARIS)</span></span><br><span class="line">      out.print_raw   (<span class="string">"/usr/bin/sh -c "</span>);</span><br><span class="line">		<span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">      out.print_raw   (<span class="string">"\""</span>);</span><br><span class="line">      out.print_raw   (cmd);</span><br><span class="line">      out.print_raw_cr(<span class="string">"\" ..."</span>);</span><br><span class="line"></span><br><span class="line">	  <span class="comment">//fork进程执行命令</span></span><br><span class="line">      os::fork_and_exec(cmd);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// done with OnError</span></span><br><span class="line">    OnError = <span class="literal">NULL</span>;</span><br><span class="line">  &#125;</span><br><span class="line">	<span class="comment">//省略。。。</span></span><br><span class="line"> &#125;</span><br><span class="line"> </span><br><span class="line"> <span class="comment">//linux下执行bash</span></span><br><span class="line"> <span class="keyword">int</span> os::fork_and_exec(<span class="keyword">char</span>* cmd) &#123;</span><br><span class="line">  <span class="keyword">const</span> <span class="keyword">char</span> * argv[<span class="number">4</span>] = &#123;<span class="string">"sh"</span>, <span class="string">"-c"</span>, cmd, <span class="literal">NULL</span>&#125;;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// fork() in LinuxThreads/NPTL is not async-safe. It needs to run</span></span><br><span class="line">  <span class="comment">// pthread_atfork handlers and reset pthread library. All we need is a</span></span><br><span class="line">  <span class="comment">// separate process to execve. Make a direct syscall to fork process.</span></span><br><span class="line">  <span class="comment">// On IA64 there's no fork syscall, we have to use fork() and hope for</span></span><br><span class="line">  <span class="comment">// the best...</span></span><br><span class="line">  <span class="keyword">pid_t</span> pid = NOT_IA64(syscall(__NR_fork);)</span><br><span class="line">              IA64_ONLY(fork();)</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (pid &lt; <span class="number">0</span>) &#123;</span><br><span class="line">    <span class="comment">// fork failed</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line"></span><br><span class="line">  &#125; <span class="keyword">else</span> <span class="keyword">if</span> (pid == <span class="number">0</span>) &#123;</span><br><span class="line">    <span class="comment">// child process</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// execve() in LinuxThreads will call pthread_kill_other_threads_np()</span></span><br><span class="line">    <span class="comment">// first to kill every thread on the thread list. Because this list is</span></span><br><span class="line">    <span class="comment">// not reset by fork() (see notes above), execve() will instead kill</span></span><br><span class="line">    <span class="comment">// every thread in the parent process. We know this is the only thread</span></span><br><span class="line">    <span class="comment">// in the new process, so make a system call directly.</span></span><br><span class="line">    <span class="comment">// IA64 should use normal execve() from glibc to match the glibc fork()</span></span><br><span class="line">    <span class="comment">// above.</span></span><br><span class="line">    NOT_IA64(syscall(__NR_execve, <span class="string">"/bin/sh"</span>, argv, environ);)</span><br><span class="line">    IA64_ONLY(execve(<span class="string">"/bin/sh"</span>, (<span class="keyword">char</span>* <span class="keyword">const</span>*)argv, environ);)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// execve failed</span></span><br><span class="line">    _exit(<span class="number">-1</span>);</span><br><span class="line"></span><br><span class="line">  &#125; <span class="keyword">else</span>  &#123;</span><br><span class="line">    <span class="comment">// copied from J2SE ..._waitForProcessExit() in UNIXProcess_md.c; we don't</span></span><br><span class="line">    <span class="comment">// care about the actual exit code, for now.</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">int</span> status;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Wait for the child process to exit.  This returns immediately if</span></span><br><span class="line">    <span class="comment">// the child has already exited. */</span></span><br><span class="line">    <span class="keyword">while</span> (waitpid(pid, &amp;status, <span class="number">0</span>) &lt; <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">switch</span> (errno) &#123;</span><br><span class="line">        <span class="keyword">case</span> ECHILD: <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">case</span> EINTR: <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">default</span>: <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (WIFEXITED(status)) &#123;</span><br><span class="line">       <span class="comment">// The child exited normally; get its exit code.</span></span><br><span class="line">       <span class="keyword">return</span> WEXITSTATUS(status);</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (WIFSIGNALED(status)) &#123;</span><br><span class="line">       <span class="comment">// The child exited because of a signal</span></span><br><span class="line">       <span class="comment">// The best value to return is 0x80 + signal number,</span></span><br><span class="line">       <span class="comment">// because that is what all Unix shells do, and because</span></span><br><span class="line">       <span class="comment">// it allows callers to distinguish between process exit and</span></span><br><span class="line">       <span class="comment">// process death by signal.</span></span><br><span class="line">       <span class="keyword">return</span> <span class="number">0x80</span> + WTERMSIG(status);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">       <span class="comment">// Unknown exit code; pass it through</span></span><br><span class="line">       <span class="keyword">return</span> status;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<blockquote>
+<p>当系统发出SIGBUS（指针所对应的地址是有效地址，但总线不能正常使用该指针。通常是未对齐的数据访问所致）<br>、SIGSEGV(指针所对应的地址是无效地址，没有物理内存对应该地址)或者无法处理的信号时调用crash_handler，fork进程执行命令，<br>如果内存已经严重不足则无法成功fork</p>
+</blockquote>
+<p>2、JVM检测到Crash的时候不立即退出，打开调试器</p>
+<ul>
+<li>使用-XX:+ShowMessageBoxOnError</li>
+<li>原理跟上面一样调用crash_handler，另外一种情况Shutdown.shutdown()<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//ShutDown.shutdonw情况</span></span><br><span class="line">	<span class="comment">// Threads::destroy_vm() is normally called from jni_DestroyJavaVM() when</span></span><br><span class="line"><span class="comment">// the program falls off the end of main(). Another VM exit path is through</span></span><br><span class="line"><span class="comment">// vm_exit() when the program calls System.exit() to return a value or when</span></span><br><span class="line"><span class="comment">// there is a serious error in VM. The two shutdown paths are not exactly</span></span><br><span class="line"><span class="comment">// the same, but they share Shutdown.shutdown() at Java level and before_exit()</span></span><br><span class="line"><span class="comment">// and VM_Exit op at VM level.</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">// Shutdown sequence:</span></span><br><span class="line"><span class="comment">//   + Shutdown native memory tracking if it is on</span></span><br><span class="line"><span class="comment">//   + Wait until we are the last non-daemon thread to execute</span></span><br><span class="line"><span class="comment">//     &lt;-- every thing is still working at this moment --&gt;</span></span><br><span class="line"><span class="comment">//   + Call java.lang.Shutdown.shutdown(), which will invoke Java level</span></span><br><span class="line"><span class="comment">//        shutdown hooks, run finalizers if finalization-on-exit</span></span><br><span class="line"><span class="comment">//   + Call before_exit(), prepare for VM exit</span></span><br><span class="line"><span class="comment">//      &gt; run VM level shutdown hooks (they are registered through JVM_OnExit(),</span></span><br><span class="line"><span class="comment">//        currently the only user of this mechanism is File.deleteOnExit())</span></span><br><span class="line"><span class="comment">//      &gt; stop flat profiler, StatSampler, watcher thread, CMS threads,</span></span><br><span class="line"><span class="comment">//        post thread end and vm death events to JVMTI,</span></span><br><span class="line"><span class="comment">//        stop signal thread</span></span><br><span class="line"><span class="comment">//   + Call JavaThread::exit(), it will:</span></span><br><span class="line"><span class="comment">//      &gt; release JNI handle blocks, remove stack guard pages</span></span><br><span class="line"><span class="comment">//      &gt; remove this thread from Threads list</span></span><br><span class="line"><span class="comment">//     &lt;-- no more Java code from this thread after this point --&gt;</span></span><br><span class="line"><span class="comment">//   + Stop VM thread, it will bring the remaining VM to a safepoint and stop</span></span><br><span class="line"><span class="comment">//     the compiler threads at safepoint</span></span><br><span class="line"><span class="comment">//     &lt;-- do not use anything that could get blocked by Safepoint --&gt;</span></span><br><span class="line"><span class="comment">//   + Disable tracing at JNI/JVM barriers</span></span><br><span class="line"><span class="comment">//   + Set _vm_exited flag for threads that are still running native code</span></span><br><span class="line"><span class="comment">//   + Delete this thread</span></span><br><span class="line"><span class="comment">//   + Call exit_globals()</span></span><br><span class="line"><span class="comment">//      &gt; deletes tty</span></span><br><span class="line"><span class="comment">//      &gt; deletes PerfMemory resources</span></span><br><span class="line"><span class="comment">//   + Return to caller</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">bool</span> Threads::destroy_vm() &#123;</span><br><span class="line">  <span class="comment">//省略。。。</span></span><br><span class="line">  <span class="comment">//等待调试</span></span><br><span class="line">  <span class="keyword">if</span> (ShowMessageBoxOnError &amp;&amp; is_error_reported()) &#123;</span><br><span class="line">    os::infinite_sleep();</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">//省略。。。</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//等待</span></span><br><span class="line"><span class="keyword">void</span> os::infinite_sleep() &#123;</span><br><span class="line">  <span class="keyword">while</span> (<span class="literal">true</span>) &#123;    <span class="comment">// sleep forever ...</span></span><br><span class="line">    ::sleep(<span class="number">100</span>);   <span class="comment">// ... 100 seconds at a time</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">//信号量情况</span></span><br><span class="line"><span class="keyword">void</span> VMError::report_and_die() &#123;</span><br><span class="line">	<span class="comment">//省略。。。</span></span><br><span class="line">    <span class="keyword">if</span> (ShowMessageBoxOnError || PauseAtExit) &#123;</span><br><span class="line">      show_message_box(buffer, <span class="keyword">sizeof</span>(buffer));</span><br><span class="line"></span><br><span class="line">      <span class="comment">// User has asked JVM to abort. Reset ShowMessageBoxOnError so the</span></span><br><span class="line">      <span class="comment">// WatcherThread can kill JVM if the error handler hangs.</span></span><br><span class="line">      ShowMessageBoxOnError = <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">	<span class="comment">//省略。。。</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//对话框，阻塞</span></span><br><span class="line"><span class="keyword">void</span> VMError::show_message_box(<span class="keyword">char</span> *buf, <span class="keyword">int</span> buflen) &#123;</span><br><span class="line">  <span class="keyword">bool</span> yes;</span><br><span class="line">  <span class="keyword">do</span> &#123;</span><br><span class="line">    error_string(buf, buflen);</span><br><span class="line">    <span class="keyword">int</span> len = (<span class="keyword">int</span>)<span class="built_in">strlen</span>(buf);</span><br><span class="line">    <span class="keyword">char</span> *p = &amp;buf[len];</span><br><span class="line"></span><br><span class="line">    jio_snprintf(p, buflen - len,</span><br><span class="line">               <span class="string">"\n\n"</span></span><br><span class="line">               <span class="string">"Do you want to debug the problem?\n\n"</span></span><br><span class="line">               <span class="string">"To debug, run 'gdb /proc/%d/exe %d'; then switch to thread "</span> UINTX_FORMAT <span class="string">" ("</span> INTPTR_FORMAT <span class="string">")\n"</span></span><br><span class="line">               <span class="string">"Enter 'yes' to launch gdb automatically (PATH must include gdb)\n"</span></span><br><span class="line">               <span class="string">"Otherwise, press RETURN to abort..."</span>,</span><br><span class="line">               os::current_process_id(), os::current_process_id(),</span><br><span class="line">               os::current_thread_id(), os::current_thread_id());</span><br><span class="line"></span><br><span class="line">    yes = os::message_box(<span class="string">"Unexpected Error"</span>, buf);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (yes) &#123;</span><br><span class="line">      <span class="comment">// yes, user asked VM to launch debugger</span></span><br><span class="line">      jio_snprintf(buf, buflen, <span class="string">"gdb /proc/%d/exe %d"</span>,</span><br><span class="line">                   os::current_process_id(), os::current_process_id());</span><br><span class="line"></span><br><span class="line">      os::fork_and_exec(buf);</span><br><span class="line">      yes = <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125; <span class="keyword">while</span> (yes);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>3、保存完整的core dump</p>
+<ul>
+<li>为便于事后分析，最好能留下core dump<blockquote>
+<p>参考：<a href="https://www.cnblogs.com/Anker/p/6079580.html" target="_blank" rel="noopener">https://www.cnblogs.com/Anker/p/6079580.html</a></p>
+</blockquote>
+</li>
+<li>注意ulimit -c unlimited</li>
+<li>尽量在程序的当前工作目录留出足够磁盘空间或配置core dump文件的路径到合适的位置</li>
+</ul>
+
+      
+    </div>
+    
+  </div>
+  
+    
+    <div class="copyright">
+        <p><span>Title:</span><a href="/2018/08/08/jvm_crash现场保护小技巧/">jvm crash现场保护小技巧</a></p>
+        <p><span>Author:</span><a href="/" title="Back to Homepage">leo</a></p>
+        <p><span>Created:</span>2018-08-08, 19:00:00</p>
+        <p><span>Updated:</span>2018-08-08, 21:01:18</p>
+        <p>
+            <span>Full URL:</span><a class="post-url" href="/2018/08/08/jvm_crash现场保护小技巧/" title="jvm crash现场保护小技巧">http://lshm.github.io/2018/08/08/jvm_crash现场保护小技巧/</a>
+            <span class="copy-path" data-clipboard-text="From http://lshm.github.io/2018/08/08/jvm_crash现场保护小技巧/　　By leo" title="Copy Article&#39;s Link &amp; Author"><i class="fa fa-clipboard"></i></span>
+            <script> var clipboard = new Clipboard('.copy-path'); </script>
+        </p>
+        <p>
+            <span>License:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" title="CC BY-NC-SA 4.0 International" target = "_blank">"CC BY-NC-SA 4.0"</a> Keep Link &amp; Author if Distribute.
+        </p>
+    </div>
+
+
+
+    <nav id="article-nav">
+        
+        
+            <div id="article-nav-older" class="article-nav-title">
+                <a href="/2018/03/22/volatile原理/">
+                    volatile原理
+                </a>
+            </div>
+        
+    </nav>
+
+  
+</article>
+
+    <div id="toc" class="toc-article">
+        <strong class="toc-title">Contents</strong>
+        
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#jvm-crash定义"><span class="toc-number">1.</span> <span class="toc-text"><a href="#jvm-crash&#x5B9A;&#x4E49;" class="headerlink" title="jvm crash&#x5B9A;&#x4E49;"></a>jvm crash&#x5B9A;&#x4E49;</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#现场保护"><span class="toc-number">2.</span> <span class="toc-text"><a href="#&#x73B0;&#x573A;&#x4FDD;&#x62A4;" class="headerlink" title="&#x73B0;&#x573A;&#x4FDD;&#x62A4;"></a>&#x73B0;&#x573A;&#x4FDD;&#x62A4;</span></a></li></ol>
+        
+    </div>
+    <style>
+        .left-col .switch-btn,
+        .left-col .switch-area {
+            display: none;
+        }
+        .toc-level-3 i,
+        .toc-level-3 ol {
+            display: none !important;
+        }
+    </style>
+
+    <input type="button" id="tocButton" value="Hide"  title="Show or Hide Table of Contents">
+
+    <script>
+        yiliaConfig.toc = ["Hide", "Show", !!"false"];
+    </script>
+
+
+
+    
+<div class="share">
+    
+        <div class="bdsharebuttonbox">
+            <a href="#" class="fa fa-twitter bds_twi" data-cmd="twi" title="分享到推特"></a>
+            <a href="#" class="fa fa-weibo bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+            <a href="#" class="fa fa-qq bds_sqq" data-cmd="sqq" title="分享给 QQ 好友"></a>
+            <a href="#" class="fa fa-files-o bds_copy" data-cmd="copy" title="复制网址"></a>
+            <a href="#" class="fa fa fa-envelope-o bds_mail" data-cmd="mail" title="通过邮件分享"></a>
+            <a href="#" class="fa fa-weixin bds_weixin" data-cmd="weixin" title="生成文章二维码"></a>
+            <a href="#" class="fa fa-share-alt bds_more" data-cmd="more"></i></a>
+        </div>
+        <script>
+            window._bd_share_config={
+                "common":{"bdSnsKey":{},"bdText":"jvm crash现场保护小技巧　| leo　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+        </script>
+    
+
+    
+</div>
+
+
+
+
+
+
+
+    
+        <section class="youyan" id="comments">
+    <script>
+        var loadComment = function(){
+            var d = document, s = d.createElement('script');
+            s.src = 'http://v2.uyan.cc/code/uyan.js?uid=2141007';
+            (d.head || d.body).appendChild(s);
+        }
+    </script>
+    
+    <script> loadComment(); </script>
+
+    <div id="uyan_frame"></div>
+</section>
+    
+
+
+
+
+    <div class="scroll" id="post-nav-button">
+        
+            <a href="/" title="Back to Homepage"><i class="fa fa-home"></i></a>
+        
+
+        <a title="Mini Archives"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
+
+        
+            <a href="/2018/03/22/volatile原理/" title="Next: volatile原理">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        
+    </div>
+
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2018/08/08/jvm_crash现场保护小技巧/">jvm crash现场保护小技巧</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/03/22/volatile原理/">volatile原理</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/12/csdn博客传送门/">CSDN传送门</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/11/spring-boot日志问题/">spring-boot日志问题</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/18/JVM内存/">JVM内存</a></li></ul>
+
+
+
+
+    <script>
+        
+    </script>
+</div>
+      <footer id="footer">
+    <div class="outer">
+        <div id="footer-info">
+            <div class="footer-left">
+                <i class="fa fa-copyright"></i> 
+                2017-2018 leo
+            </div>
+            <div class="footer-right">
+                <a href="http://hexo.io/" target="_blank" title="A fast, simple &amp; powerful blog framework">Hexo</a>  Theme <a href="https://github.com/MOxFIVE/hexo-theme-yelee" target="_blank" title="Another simple and elegant theme for Hexo  v3.5">Yelee</a> by MOxFIVE <i class="fa fa-heart animated infinite pulse"></i>
+            </div>
+        </div>
+        
+            <div class="visit">
+                
+                    <span id="busuanzi_container_site_pv" style='display:none'>
+                        <span id="site-visit" title="Site Visitors"><i class="fa fa-user" aria-hidden="true"></i><span id="busuanzi_value_site_uv"></span>
+                        </span>
+                    </span>
+                
+                
+                    <span>| </span>
+                
+                
+                    <span id="busuanzi_container_page_pv" style='display:none'>
+                        <span id="page-visit"  title="Page Hits"><i class="fa fa-eye animated infinite pulse" aria-hidden="true"></i><span id="busuanzi_value_page_pv"></span>
+                        </span>
+                    </span>
+                
+            </div>
+        
+    </div>
+</footer>
+    </div>
+    
+<script data-main="/js/main.js" src="//cdn.bootcss.com/require.js/2.2.0/require.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            var iPad = window.navigator.userAgent.indexOf('iPad');
+            if (iPad > -1 || $(".left-col").css("display") === "none") {
+                var bgColorList = ["#9db3f4", "#414141", "#e5a859", "#f5dfc6", "#c084a0", "#847e72", "#cd8390", "#996731"];
+                var bgColor = Math.ceil(Math.random() * (bgColorList.length - 1));
+                $("body").css({"background-color": bgColorList[bgColor], "background-size": "cover"});
+            }
+            else {
+                var backgroundnum = 6;
+                var backgroundimg = "url(/background/bg-x.jpg)".replace(/x/gi, Math.ceil(Math.random() * backgroundnum));
+                $("body").css({"background": backgroundimg, "background-attachment": "fixed", "background-size": "cover"});
+            }
+        })
+    </script>
+
+
+
+
+
+<div class="scroll" id="scroll">
+    <a href="#" title="Back to Top"><i class="fa fa-arrow-up"></i></a>
+    <a href="#comments" onclick="load$hide();" title="Comments"><i class="fa fa-comments-o"></i></a>
+    <a href="#footer" title="Go to Bottom"><i class="fa fa-arrow-down"></i></a>
+</div>
+<script>
+    // Open in New Window
+    
+        var oOpenInNew = {
+            
+            
+            
+            
+            
+            
+             archives: ".archive-article-title", 
+             miniArchives: "a.post-list-link", 
+            
+             friends: "#js-friends a", 
+             socail: ".social a" 
+        }
+        for (var x in oOpenInNew) {
+            $(oOpenInNew[x]).attr("target", "_blank");
+        }
+    
+</script>
+
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+  </div>
+</body>
+</html>
