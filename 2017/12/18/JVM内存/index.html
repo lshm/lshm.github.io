@@ -160,13 +160,13 @@
                 <div class="tips-box hide">
                     <div class="tips-arrow"></div>
                     <ul class="tips-inner">
-                        <li>Menu</li>
-                        <li>Tags</li>
+                        <li>菜单</li>
+                        <li>标签</li>
                         
-                        <li>Friends</li>
+                        <li>友情链接</li>
                         
                         
-                        <li>About Me</li>
+                        <li>关于我</li>
                         
                     </ul>
                 </div>
@@ -203,7 +203,7 @@
                 
                 <section class="switch-part switch-part2">
                     <div class="widget tagcloud" id="js-tagcloud">
-                        <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSDN博客地址/">CSDN博客地址</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JVM/">JVM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/jvm/">jvm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/spring-boot/">spring-boot</a></li></ul>
+                        <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSDN博客地址/">CSDN博客地址</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JVM/">JVM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/jvm/">jvm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/spring-boot/">spring-boot</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/架构设计/">架构设计</a></li></ul>
                     </div>
                 </section>
                 
@@ -276,7 +276,7 @@
             </nav>
         </header>                
     </div>
-    <link class="menu-list" tags="Tags" friends="Friends" about="About Me"/>
+    <link class="menu-list" tags="标签" friends="友情链接" about="关于我"/>
 </nav>
       <div class="body-wrap"><article id="post-JVM内存" class="article article-type-post" itemscope itemprop="blogPost">
   
@@ -531,17 +531,17 @@
   
     
     <div class="copyright">
-        <p><span>Title:</span><a href="/2017/12/18/JVM内存/">JVM内存</a></p>
-        <p><span>Author:</span><a href="/" title="Back to Homepage">leo</a></p>
-        <p><span>Created:</span>2017-12-18, 15:15:55</p>
-        <p><span>Updated:</span>2017-12-22, 21:59:17</p>
+        <p><span>本文标题:</span><a href="/2017/12/18/JVM内存/">JVM内存</a></p>
+        <p><span>文章作者:</span><a href="/" title="回到主页">leo</a></p>
+        <p><span>发布时间:</span>2017-12-18, 15:15:55</p>
+        <p><span>最后更新:</span>2017-12-22, 21:59:17</p>
         <p>
-            <span>Full URL:</span><a class="post-url" href="/2017/12/18/JVM内存/" title="JVM内存">http://lshm.github.io/2017/12/18/JVM内存/</a>
-            <span class="copy-path" data-clipboard-text="From http://lshm.github.io/2017/12/18/JVM内存/　　By leo" title="Copy Article&#39;s Link &amp; Author"><i class="fa fa-clipboard"></i></span>
+            <span>原始链接:</span><a class="post-url" href="/2017/12/18/JVM内存/" title="JVM内存">http://lshm.github.io/2017/12/18/JVM内存/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://lshm.github.io/2017/12/18/JVM内存/　　作者: leo" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
             <script> var clipboard = new Clipboard('.copy-path'); </script>
         </p>
         <p>
-            <span>License:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" title="CC BY-NC-SA 4.0 International" target = "_blank">"CC BY-NC-SA 4.0"</a> Keep Link &amp; Author if Distribute.
+            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" title="CC BY-NC-SA 4.0 International" target = "_blank">"署名-非商用-相同方式共享 4.0"</a> 转载请保留原文链接及作者。
         </p>
     </div>
 
@@ -562,7 +562,7 @@
 </article>
 
     <div id="toc" class="toc-article">
-        <strong class="toc-title">Contents</strong>
+        <strong class="toc-title">文章目录</strong>
         
             <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#内存模型"><span class="toc-number">1.</span> <span class="toc-text"><a href="#&#x5185;&#x5B58;&#x6A21;&#x578B;" class="headerlink" title="&#x5185;&#x5B58;&#x6A21;&#x578B;"></a><strong>&#x5185;&#x5B58;&#x6A21;&#x578B;</strong></span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#操作系统内存"><span class="toc-number">1.1.</span> <span class="toc-text"><a href="#&#x64CD;&#x4F5C;&#x7CFB;&#x7EDF;&#x5185;&#x5B58;" class="headerlink" title="&#x64CD;&#x4F5C;&#x7CFB;&#x7EDF;&#x5185;&#x5B58;"></a>&#x64CD;&#x4F5C;&#x7CFB;&#x7EDF;&#x5185;&#x5B58;</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JVM内存模型"><span class="toc-number">1.2.</span> <span class="toc-text"><a href="#JVM&#x5185;&#x5B58;&#x6A21;&#x578B;" class="headerlink" title="JVM&#x5185;&#x5B58;&#x6A21;&#x578B;"></a>JVM&#x5185;&#x5B58;&#x6A21;&#x578B;</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#垃圾回收器算法"><span class="toc-number">2.</span> <span class="toc-text"><a href="#&#x5783;&#x573E;&#x56DE;&#x6536;&#x5668;&#x7B97;&#x6CD5;" class="headerlink" title="&#x5783;&#x573E;&#x56DE;&#x6536;&#x5668;&#x7B97;&#x6CD5;"></a>&#x5783;&#x573E;&#x56DE;&#x6536;&#x5668;&#x7B97;&#x6CD5;</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#标记清理"><span class="toc-number">2.1.</span> <span class="toc-text"><a href="#&#x6807;&#x8BB0;&#x6E05;&#x7406;" class="headerlink" title="&#x6807;&#x8BB0;&#x6E05;&#x7406;"></a>&#x6807;&#x8BB0;&#x6E05;&#x7406;</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#复制"><span class="toc-number">2.2.</span> <span class="toc-text"><a href="#&#x590D;&#x5236;" class="headerlink" title="&#x590D;&#x5236;"></a>&#x590D;&#x5236;</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#标记整理"><span class="toc-number">2.3.</span> <span class="toc-text"><a href="#&#x6807;&#x8BB0;&#x6574;&#x7406;" class="headerlink" title="&#x6807;&#x8BB0;&#x6574;&#x7406;"></a>&#x6807;&#x8BB0;&#x6574;&#x7406;</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#垃圾回收器"><span class="toc-number">3.</span> <span class="toc-text"><a href="#&#x5783;&#x573E;&#x56DE;&#x6536;&#x5668;" class="headerlink" title="&#x5783;&#x573E;&#x56DE;&#x6536;&#x5668;"></a>&#x5783;&#x573E;&#x56DE;&#x6536;&#x5668;</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#垃圾回收器-1"><span class="toc-number">3.1.</span> <span class="toc-text"><a href="#&#x5783;&#x573E;&#x56DE;&#x6536;&#x5668;-1" class="headerlink" title="&#x5783;&#x573E;&#x56DE;&#x6536;&#x5668;"></a>&#x5783;&#x573E;&#x56DE;&#x6536;&#x5668;</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#垃圾收集器参数总结"><span class="toc-number">3.2.</span> <span class="toc-text"><a href="#&#x5783;&#x573E;&#x6536;&#x96C6;&#x5668;&#x53C2;&#x6570;&#x603B;&#x7ED3;" class="headerlink" title="&#x5783;&#x573E;&#x6536;&#x96C6;&#x5668;&#x53C2;&#x6570;&#x603B;&#x7ED3;"></a>&#x5783;&#x573E;&#x6536;&#x96C6;&#x5668;&#x53C2;&#x6570;&#x603B;&#x7ED3;</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CMS与FULL-GC关系"><span class="toc-number">3.3.</span> <span class="toc-text"><a href="#CMS&#x4E0E;FULL-GC&#x5173;&#x7CFB;" class="headerlink" title="CMS&#x4E0E;FULL GC&#x5173;&#x7CFB;"></a>CMS&#x4E0E;FULL GC&#x5173;&#x7CFB;</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#垃圾回收日志分析"><span class="toc-number">4.</span> <span class="toc-text"><a href="#&#x5783;&#x573E;&#x56DE;&#x6536;&#x65E5;&#x5FD7;&#x5206;&#x6790;" class="headerlink" title="&#x5783;&#x573E;&#x56DE;&#x6536;&#x65E5;&#x5FD7;&#x5206;&#x6790;"></a>&#x5783;&#x573E;&#x56DE;&#x6536;&#x65E5;&#x5FD7;&#x5206;&#x6790;</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#jvm日志输出配置"><span class="toc-number">4.1.</span> <span class="toc-text"><a href="#jvm&#x65E5;&#x5FD7;&#x8F93;&#x51FA;&#x914D;&#x7F6E;" class="headerlink" title="jvm&#x65E5;&#x5FD7;&#x8F93;&#x51FA;&#x914D;&#x7F6E;"></a>jvm&#x65E5;&#x5FD7;&#x8F93;&#x51FA;&#x914D;&#x7F6E;</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#新生代日志分析"><span class="toc-number">4.2.</span> <span class="toc-text"><a href="#&#x65B0;&#x751F;&#x4EE3;&#x65E5;&#x5FD7;&#x5206;&#x6790;" class="headerlink" title="&#x65B0;&#x751F;&#x4EE3;&#x65E5;&#x5FD7;&#x5206;&#x6790;"></a>&#x65B0;&#x751F;&#x4EE3;&#x65E5;&#x5FD7;&#x5206;&#x6790;</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CMS日志分析"><span class="toc-number">4.3.</span> <span class="toc-text"><a href="#CMS&#x65E5;&#x5FD7;&#x5206;&#x6790;" class="headerlink" title="CMS&#x65E5;&#x5FD7;&#x5206;&#x6790;"></a>CMS&#x65E5;&#x5FD7;&#x5206;&#x6790;</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#内存分析实战"><span class="toc-number">5.</span> <span class="toc-text"><a href="#&#x5185;&#x5B58;&#x5206;&#x6790;&#x5B9E;&#x6218;" class="headerlink" title="&#x5185;&#x5B58;&#x5206;&#x6790;&#x5B9E;&#x6218;"></a>&#x5185;&#x5B58;&#x5206;&#x6790;&#x5B9E;&#x6218;</span></a></li></ol>
         
@@ -578,10 +578,10 @@
         }
     </style>
 
-    <input type="button" id="tocButton" value="Hide"  title="Show or Hide Table of Contents">
+    <input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
 
     <script>
-        yiliaConfig.toc = ["Hide", "Show", !!"false"];
+        yiliaConfig.toc = ["隐藏目录", "显示目录", !!"false"];
     </script>
 
 
@@ -634,19 +634,19 @@
 
     <div class="scroll" id="post-nav-button">
         
-            <a href="/2018/01/11/spring-boot日志问题/" title="Pre: spring-boot日志问题">
+            <a href="/2018/01/11/spring-boot日志问题/" title="上一篇: spring-boot日志问题">
                 <i class="fa fa-angle-left"></i>
             </a>
         
 
-        <a title="Mini Archives"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
+        <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
 
         
-            <a href="/" title="Back to Homepage"><i class="fa fa-home"></i></a>
+            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
         
     </div>
 
-    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2018/08/08/jvm_crash现场保护小技巧/">jvm crash现场保护小技巧</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/03/22/volatile原理/">volatile原理</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/12/csdn博客传送门/">CSDN传送门</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/11/spring-boot日志问题/">spring-boot日志问题</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/18/JVM内存/">JVM内存</a></li></ul>
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2018/10/22/交易中台/">交易中台</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/08/jvm_crash现场保护小技巧/">jvm crash现场保护小技巧</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/03/22/volatile原理/">volatile原理</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/12/csdn博客传送门/">CSDN传送门</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/11/spring-boot日志问题/">spring-boot日志问题</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/18/JVM内存/">JVM内存</a></li></ul>
 
 
 
@@ -663,14 +663,14 @@
                 2017-2018 leo
             </div>
             <div class="footer-right">
-                <a href="http://hexo.io/" target="_blank" title="A fast, simple &amp; powerful blog framework">Hexo</a>  Theme <a href="https://github.com/MOxFIVE/hexo-theme-yelee" target="_blank" title="Another simple and elegant theme for Hexo  v3.5">Yelee</a> by MOxFIVE <i class="fa fa-heart animated infinite pulse"></i>
+                <a href="http://hexo.io/" target="_blank" title="快速、简洁且高效的博客框架">Hexo</a>  Theme <a href="https://github.com/MOxFIVE/hexo-theme-yelee" target="_blank" title="简而不减 Hexo 双栏博客主题  v3.5">Yelee</a> by MOxFIVE <i class="fa fa-heart animated infinite pulse"></i>
             </div>
         </div>
         
             <div class="visit">
                 
                     <span id="busuanzi_container_site_pv" style='display:none'>
-                        <span id="site-visit" title="Site Visitors"><i class="fa fa-user" aria-hidden="true"></i><span id="busuanzi_value_site_uv"></span>
+                        <span id="site-visit" title="本站到访数"><i class="fa fa-user" aria-hidden="true"></i><span id="busuanzi_value_site_uv"></span>
                         </span>
                     </span>
                 
@@ -679,7 +679,7 @@
                 
                 
                     <span id="busuanzi_container_page_pv" style='display:none'>
-                        <span id="page-visit"  title="Page Hits"><i class="fa fa-eye animated infinite pulse" aria-hidden="true"></i><span id="busuanzi_value_page_pv"></span>
+                        <span id="page-visit"  title="本页阅读量"><i class="fa fa-eye animated infinite pulse" aria-hidden="true"></i><span id="busuanzi_value_page_pv"></span>
                         </span>
                     </span>
                 
@@ -712,9 +712,9 @@
 
 
 <div class="scroll" id="scroll">
-    <a href="#" title="Back to Top"><i class="fa fa-arrow-up"></i></a>
-    <a href="#comments" onclick="load$hide();" title="Comments"><i class="fa fa-comments-o"></i></a>
-    <a href="#footer" title="Go to Bottom"><i class="fa fa-arrow-down"></i></a>
+    <a href="#" title="返回顶部"><i class="fa fa-arrow-up"></i></a>
+    <a href="#comments" onclick="load$hide();" title="查看评论"><i class="fa fa-comments-o"></i></a>
+    <a href="#footer" title="转到底部"><i class="fa fa-arrow-down"></i></a>
 </div>
 <script>
     // Open in New Window
