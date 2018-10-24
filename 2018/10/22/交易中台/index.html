@@ -15,17 +15,23 @@
 
 
 
-<meta name="description" content="交易中台简介交易平台承载着公司各种交易场景，管理订单的生命周期，沉淀交易公共能力，是公司最核心的业务。 为什么要做交易中台交易中台设计">
+<meta name="description" content="交易平台简介 交易平台承载着公司各种交易场景，管理订单的生命周期，沉淀交易公共能力，是公司比较核心的业务。">
 <meta name="keywords" content="架构设计">
 <meta property="og:type" content="article">
-<meta property="og:title" content="交易中台">
+<meta property="og:title" content="交易平台">
 <meta property="og:url" content="http://lshm.github.io/2018/10/22/交易中台/index.html">
 <meta property="og:site_name" content="leo">
-<meta property="og:description" content="交易中台简介交易平台承载着公司各种交易场景，管理订单的生命周期，沉淀交易公共能力，是公司最核心的业务。 为什么要做交易中台交易中台设计">
-<meta property="og:updated_time" content="2018-10-22T06:23:49.640Z">
+<meta property="og:description" content="交易平台简介 交易平台承载着公司各种交易场景，管理订单的生命周期，沉淀交易公共能力，是公司比较核心的业务。">
+<meta property="og:image" content="http://lshm.github.io/images/trade/交易流程抽象.png">
+<meta property="og:image" content="http://lshm.github.io/images/trade/交易平台组件例子.png">
+<meta property="og:image" content="http://lshm.github.io/images/trade/交易平台整体架构.png">
+<meta property="og:image" content="http://lshm.github.io/images/trade/插件化架构.png">
+<meta property="og:image" content="http://lshm.github.io/images/trade/插件执行流程.png">
+<meta property="og:updated_time" content="2018-10-22T10:07:46.019Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="交易中台">
-<meta name="twitter:description" content="交易中台简介交易平台承载着公司各种交易场景，管理订单的生命周期，沉淀交易公共能力，是公司最核心的业务。 为什么要做交易中台交易中台设计">
+<meta name="twitter:title" content="交易平台">
+<meta name="twitter:description" content="交易平台简介 交易平台承载着公司各种交易场景，管理订单的生命周期，沉淀交易公共能力，是公司比较核心的业务。">
+<meta name="twitter:image" content="http://lshm.github.io/images/trade/交易流程抽象.png">
 
 <link rel="apple-touch-icon" href= "/apple-touch-icon.png">
 
@@ -57,7 +63,7 @@
 <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
 
 
-<title>交易中台 | leo</title>
+<title>交易平台 | leo</title>
 
 <script src="//cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
 <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
@@ -283,7 +289,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      交易中台
+      交易平台
     </h1>
   
 
@@ -308,8 +314,46 @@
     <div class="article-entry" itemprop="articleBody">
       
           
-        <h2 id="交易中台简介"><a href="#交易中台简介" class="headerlink" title="交易中台简介"></a>交易中台简介</h2><p>交易平台承载着公司各种交易场景，管理订单的生命周期，沉淀交易公共能力，是公司最核心的业务。</p>
-<h2 id="为什么要做交易中台"><a href="#为什么要做交易中台" class="headerlink" title="为什么要做交易中台"></a>为什么要做交易中台</h2><h2 id="交易中台设计"><a href="#交易中台设计" class="headerlink" title="交易中台设计"></a>交易中台设计</h2>
+        <h2 id="交易平台简介"><a href="#交易平台简介" class="headerlink" title="交易平台简介"></a>交易平台简介</h2><p><b> 交易平台承载着公司各种交易场景，管理订单的生命周期，沉淀交易公共能力，是公司比较核心的业务。</b></p>
+<a id="more"></a>
+<p>交易可以分为以下四个时期：</p>
+<ul>
+<li>合同意向：购物车撮合交易，如展示已满足营销方案、提示可以凑单满足的营销方案等。</li>
+<li>合同签订：如果涉及到多家店铺一起下单的话，有个合同拆单过程；价格计算；合同落库（即保存用户下单的商品数据、收货地址等信息到数据库）。</li>
+<li>合同履约：买家支付合同签订时金额，卖家交付买家合同中购买的商品。</li>
+<li>合同违约：交易过程中发现商品损坏或者不满意，则可以发起退货退款以及维权的流程。</li>
+</ul>
+<p><img src="/images/trade/交易流程抽象.png" alt="交易四个时期"></p>
+<h2 id="为什么要做交易平台"><a href="#为什么要做交易平台" class="headerlink" title="为什么要做交易平台"></a>为什么要做交易平台</h2><p>现有问题：</p>
+<blockquote>
+<p>1、现有交易平台模块耦合严重，业务和流程交叉在一起。代码里面会有很多分支判断，有时候改动一块影响到另外一个业务。<br>2、接入的个性化处理越来越多，交易这边需要处理各种问题（高铁外卖、普通外卖、企业外卖交易流程都有差异），资源缺少，扩展难。<br>3、多业态支持困难，公共能力难以沉淀。</p>
+</blockquote>
+<p>综上所述，交易当前遇到的主要问题是流程和业务需要分开（即流程编排），个性化需要按照不同的业务进行扩展（即扩展点）。</p>
+<h2 id="交易平台设计"><a href="#交易平台设计" class="headerlink" title="交易平台设计"></a>交易平台设计</h2><p>基于上述问题，我们进行了交易的改造。<br>1、流程梳理<br>    将交易按照四个时期进行梳理，把各个节点的能力提现出来，划分到不同的领域。</p>
+<blockquote>
+<p>打个比方，堂食预付</p>
+<ul>
+<li>合同意向期：获取购物车数据-&gt;优惠咨询-&gt;计算优惠-&gt;各种费用-&gt;返回数据</li>
+<li>合同签订：获取购物车数据-&gt;校验一些信息-&gt;计算商品价格-&gt;预扣库存-&gt;下单-&gt;清购物车</li>
+<li>合同履约：C端获取订单信息-&gt;计算费用-&gt;生成支付快照-&gt;支付金额-&gt;核销快照；B端接单-&gt;生成pos订单-&gt;记录支付流水-&gt;上传数据</li>
+<li>合同违约：退款<br>由于涉及到公司的业务，这里只是大概列举了一部分业务，还需要细分。</li>
+</ul>
+</blockquote>
+<p>划分的一个订单域：<br><img src="/images/trade/交易平台组件例子.png" alt="交易平台组件例子"></p>
+<p>2、交易平台架构</p>
+<blockquote>
+<p>业务节点梳理完之后，我们需要一个流程编排引擎，来把业务节点串起来，业务节点可以留扩展点，让业务层实现。<br>交易平台整体架构：</p>
+</blockquote>
+<p><img src="/images/trade/交易平台整体架构.png" alt="交易平台整体架构"><br>领域层：提供基础的能力，如下单、扣减库存、支付等，留下扩展点（如超时时间设置）<br>业务层：定制业务的流程，引用领域层提供的能力，编写扩展点实现，对业务进行个性化配置。<br>交易平台引用引入领域层包+业务层包（即插件），再通过我们开发的optimus流程引擎实现一个业务流的运行（即流程编排）。</p>
+<blockquote>
+<p>optimus流程引擎架构：</p>
+</blockquote>
+<p><img src="/images/trade/插件化架构.png" alt="optimus整体架构"></p>
+<p><img src="/images/trade/插件执行流程.png" alt="optimus执行流程"></p>
+<p>plugin插件配置：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">插件配置目录：/resources/META-INF/plugin/</span><br><span class="line">&lt;plugin id=&quot;xxx&quot; desc=&quot;xxxx&quot; version=&quot;xxxx&quot; scanPackages=&quot;xxx,xxxx&quot;&gt;</span><br><span class="line">&lt;/plugin&gt;</span><br><span class="line">id唯一标识，如com.dire.order.platform</span><br><span class="line">desc描述信息</span><br><span class="line">version版本号，暂未启用，后面考虑覆盖使用</span><br><span class="line">scanPackages包的扫描路径，spring扫描，plugin加载插件中的能力，规则，校验，事件等</span><br></pre></td></tr></table></figure></p>
+<p>flow流程配置：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">插件配置目录：/resources/META-INF/flow/xxx.xml</span><br><span class="line">&lt;flow identifyCode=&quot;TRAIN_TAKEOUT_SUBMIT_ORDER&quot;&gt;</span><br><span class="line">    &lt;bizNodes&gt;</span><br><span class="line">	</span><br><span class="line">        &lt;bizNode id=&quot;test1&quot; nodeType=&quot;Composite&quot; coreSize=&quot;2&quot; maxSize=&quot;2&quot; queue=&quot;5&quot; target=&quot;test2&quot; sync=&quot;1&quot; name=&quot;提交订单&quot;&gt;</span><br><span class="line">            &lt;subNode nodeType=&quot;Single&quot; abilityClass=&quot;com.dfire.optimus.flow.test.ability.SubmitOrderAbility&quot; name=&quot;提交订单1&quot;&gt;</span><br><span class="line">                &lt;extension extPoint=&quot;com.dfire.optimus.flow.test.extension.IOrderConvert&quot; extPointImpl=&quot;com.dfire.optimus.flow.test.extension.TakeoutOrderConvert&quot; name=&quot;外卖结果转换扩展点&quot;/&gt;</span><br><span class="line">            &lt;/subNode&gt;</span><br><span class="line">            &lt;subNode nodeType=&quot;Single&quot; abilityClass=&quot;com.dfire.optimus.flow.test.ability.TrainLockTestAbility&quot; name=&quot;加锁&quot;/&gt;</span><br><span class="line">        &lt;/bizNode&gt;</span><br><span class="line">		</span><br><span class="line">        &lt;bizNode id=&quot;test2&quot; nodeType=&quot;Single&quot; abilityClass=&quot;com.dfire.optimus.flow.test.ability.SubmitOrderAbility&quot; target=&quot;test3&quot; name=&quot;提交订单2&quot;/&gt;</span><br><span class="line">		</span><br><span class="line">        &lt;bizNode id=&quot;test3&quot; nodeType=&quot;Branch&quot; name=&quot;判断订单是否提交成功&quot;&gt;</span><br><span class="line">            &lt;expression condition=&quot;submit == false&quot; target=&quot;test4&quot; name=&quot;失败&quot;/&gt;</span><br><span class="line">            &lt;expression condition=&quot;submit == true&quot; target=&quot;test5&quot; name=&quot;成功&quot;/&gt;</span><br><span class="line">        &lt;/bizNode&gt;</span><br><span class="line">		</span><br><span class="line">        &lt;bizNode id=&quot;test4&quot; nodeType=&quot;Single&quot; abilityClass=&quot;com.dfire.optimus.flow.test.ability.SubmitOrderAbility&quot;  name=&quot;提交订单3&quot;/&gt;</span><br><span class="line">		</span><br><span class="line">        &lt;bizNode id=&quot;test5&quot; nodeType=&quot;Single&quot; abilityClass=&quot;com.dfire.optimus.flow.test.ability.SubmitOrderAbility&quot;  name=&quot;提交订单4&quot;/&gt;</span><br><span class="line">		</span><br><span class="line">    &lt;/bizNodes&gt;</span><br><span class="line">&lt;/flow&gt;</span><br><span class="line">identifyCode业务身份,可以多个业务身份一个流程</span><br><span class="line"></span><br><span class="line">bizNode业务节点:</span><br><span class="line">1、id唯一节点标识（顶级bizNode需要）</span><br><span class="line">2、target下一节点（即对应节点的id）</span><br><span class="line">3、name节点信息描述</span><br><span class="line">4、abilityClass执行的业务逻辑</span><br><span class="line">5、noteType节点类型，Single同步执行，Composite并发执行，Branch分支判断：</span><br><span class="line">	Composite节点下只能存放Single节点</span><br><span class="line">	Single可以指定能力留下的扩展点extension（格式如上），进行调用</span><br><span class="line">	Branch分支判断节点，包含expression节点（格式如上）</span><br></pre></td></tr></table></figure></p>
+<h2 id="未来规划"><a href="#未来规划" class="headerlink" title="未来规划"></a>未来规划</h2><p>1、现在流程基于xml配置方式实现，后期考虑改为配置后台，生成元数据的方式实现，流程数据动态生效。<br>2、插件可以实时发布生效，动态加载，无需重启服务器。<br>3、不同业务之间的隔离（机器隔离的方式），防止相互影响。（比如一个业务出现调用慢或者oom不影响其他业务）<br>4、自动化测试（抓取线上流量回放或者手动配置测试的方式）</p>
+
       
     </div>
     
@@ -317,12 +361,12 @@
   
     
     <div class="copyright">
-        <p><span>本文标题:</span><a href="/2018/10/22/交易中台/">交易中台</a></p>
+        <p><span>本文标题:</span><a href="/2018/10/22/交易中台/">交易平台</a></p>
         <p><span>文章作者:</span><a href="/" title="回到主页">leo</a></p>
         <p><span>发布时间:</span>2018-10-22, 10:00:00</p>
-        <p><span>最后更新:</span>2018-10-22, 14:23:49</p>
+        <p><span>最后更新:</span>2018-10-22, 18:07:46</p>
         <p>
-            <span>原始链接:</span><a class="post-url" href="/2018/10/22/交易中台/" title="交易中台">http://lshm.github.io/2018/10/22/交易中台/</a>
+            <span>原始链接:</span><a class="post-url" href="/2018/10/22/交易中台/" title="交易平台">http://lshm.github.io/2018/10/22/交易中台/</a>
             <span class="copy-path" data-clipboard-text="原文: http://lshm.github.io/2018/10/22/交易中台/　　作者: leo" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
             <script> var clipboard = new Clipboard('.copy-path'); </script>
         </p>
@@ -350,7 +394,7 @@
     <div id="toc" class="toc-article">
         <strong class="toc-title">文章目录</strong>
         
-            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#交易中台简介"><span class="toc-number">1.</span> <span class="toc-text"><a href="#&#x4EA4;&#x6613;&#x4E2D;&#x53F0;&#x7B80;&#x4ECB;" class="headerlink" title="&#x4EA4;&#x6613;&#x4E2D;&#x53F0;&#x7B80;&#x4ECB;"></a>&#x4EA4;&#x6613;&#x4E2D;&#x53F0;&#x7B80;&#x4ECB;</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#为什么要做交易中台"><span class="toc-number">2.</span> <span class="toc-text"><a href="#&#x4E3A;&#x4EC0;&#x4E48;&#x8981;&#x505A;&#x4EA4;&#x6613;&#x4E2D;&#x53F0;" class="headerlink" title="&#x4E3A;&#x4EC0;&#x4E48;&#x8981;&#x505A;&#x4EA4;&#x6613;&#x4E2D;&#x53F0;"></a>&#x4E3A;&#x4EC0;&#x4E48;&#x8981;&#x505A;&#x4EA4;&#x6613;&#x4E2D;&#x53F0;</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#交易中台设计"><span class="toc-number">3.</span> <span class="toc-text"><a href="#&#x4EA4;&#x6613;&#x4E2D;&#x53F0;&#x8BBE;&#x8BA1;" class="headerlink" title="&#x4EA4;&#x6613;&#x4E2D;&#x53F0;&#x8BBE;&#x8BA1;"></a>&#x4EA4;&#x6613;&#x4E2D;&#x53F0;&#x8BBE;&#x8BA1;</span></a></li></ol>
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#交易平台简介"><span class="toc-number">1.</span> <span class="toc-text"><a href="#&#x4EA4;&#x6613;&#x5E73;&#x53F0;&#x7B80;&#x4ECB;" class="headerlink" title="&#x4EA4;&#x6613;&#x5E73;&#x53F0;&#x7B80;&#x4ECB;"></a>&#x4EA4;&#x6613;&#x5E73;&#x53F0;&#x7B80;&#x4ECB;</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#为什么要做交易平台"><span class="toc-number">2.</span> <span class="toc-text"><a href="#&#x4E3A;&#x4EC0;&#x4E48;&#x8981;&#x505A;&#x4EA4;&#x6613;&#x5E73;&#x53F0;" class="headerlink" title="&#x4E3A;&#x4EC0;&#x4E48;&#x8981;&#x505A;&#x4EA4;&#x6613;&#x5E73;&#x53F0;"></a>&#x4E3A;&#x4EC0;&#x4E48;&#x8981;&#x505A;&#x4EA4;&#x6613;&#x5E73;&#x53F0;</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#交易平台设计"><span class="toc-number">3.</span> <span class="toc-text"><a href="#&#x4EA4;&#x6613;&#x5E73;&#x53F0;&#x8BBE;&#x8BA1;" class="headerlink" title="&#x4EA4;&#x6613;&#x5E73;&#x53F0;&#x8BBE;&#x8BA1;"></a>&#x4EA4;&#x6613;&#x5E73;&#x53F0;&#x8BBE;&#x8BA1;</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#未来规划"><span class="toc-number">4.</span> <span class="toc-text"><a href="#&#x672A;&#x6765;&#x89C4;&#x5212;" class="headerlink" title="&#x672A;&#x6765;&#x89C4;&#x5212;"></a>&#x672A;&#x6765;&#x89C4;&#x5212;</span></a></li></ol>
         
     </div>
     <style>
@@ -386,7 +430,7 @@
         </div>
         <script>
             window._bd_share_config={
-                "common":{"bdSnsKey":{},"bdText":"交易中台　| leo　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+                "common":{"bdSnsKey":{},"bdText":"交易平台　| leo　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
         </script>
     
 
@@ -432,7 +476,7 @@
         
     </div>
 
-    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2018/10/22/交易中台/">交易中台</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/08/jvm_crash现场保护小技巧/">jvm crash现场保护小技巧</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/03/22/volatile原理/">volatile原理</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/12/csdn博客传送门/">CSDN传送门</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/11/spring-boot日志问题/">spring-boot日志问题</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/18/JVM内存/">JVM内存</a></li></ul>
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2018/10/22/交易中台/">交易平台</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/08/jvm_crash现场保护小技巧/">jvm crash现场保护小技巧</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/03/22/volatile原理/">volatile原理</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/12/csdn博客传送门/">CSDN传送门</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/11/spring-boot日志问题/">spring-boot日志问题</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/12/18/JVM内存/">JVM内存</a></li></ul>
 
 
 
